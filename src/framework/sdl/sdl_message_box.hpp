@@ -42,8 +42,8 @@ public:
         this->text = text;
     }
 
-    int show();
-    int showSimple(Type type, const std::string& title, const std::string& text);
+    int show(Type type);
+    void showSimple(Type type, const std::string& title, const std::string& text);
 
     std::string& getTitle()const{return title;}
     std::string& getText()const{return text;}

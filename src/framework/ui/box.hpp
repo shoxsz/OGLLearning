@@ -15,7 +15,7 @@ public:
 	virtual ~Box(){}
 
 	/*process and dispatch events*/
-	virtual void act() = 0;
+	virtual void poll() = 0;
 
 	void setRoot(WidgetPtr root){
 		this->root = root;

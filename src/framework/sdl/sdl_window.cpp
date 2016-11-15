@@ -4,23 +4,6 @@
 
 #include "sdl_app.hpp"
 
-void SDLBox::act(){
-	SDL_Event* event = SDLApplication::getInstance().getEvent();
-
-	while(SDL_PollEvent(&event)){
-		switch(event.type){
-			case SDL_WINDOW_EVENT{
-				switch(event.window.type){
-					case SDL_WINDOW_CLOSE:
-						window->close();
-					break;
-				}
-			break;
-			}
-		}
-	}
-}
-
 SDLWindow::~SDLWindow(){
 	SDL_DestroyWindow(window);
 	SDL_GL_DeleteContext(gl);
@@ -74,12 +57,10 @@ void SDLWindow::setTitle(const std::string& title){
 }
 
 void SDLWindow::setSize(int width, int height){
-	if (window != nullptr)
+	this->width = width;
+	this->height = height;
+	if (window)
 		SDL_SetWindowSize(window, width, height);
-	else{
-		this->width = width;
-		this->height = height;
-	}
 }
 
 void SDLWindow::setPosition(int x, int y){
@@ -95,10 +76,4 @@ void SDLWindow::setVisibility(bool visible){
 		SDL_ShowWindow(window);
 	else
 		SDL_HideWindow(window);
-}
-
-void SDLWindow::resized(int w, int h){
-	this->width = w;
-	this->height = h;
-	/*Call some graphics function to change the viewport...*/
 }

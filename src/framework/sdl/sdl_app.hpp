@@ -30,15 +30,21 @@ public:
     
     SDLApplication(): running(false), window(nullptr){}
 
+    void setFPS(unsigned int fps){this->fps = fps;}
+
     void init(SubSystem flags = All);
     void quit();
 
     void run(SDLWindow* window);
 
     bool isRunning()const{return running;}
+    unsigned int getFPS()const{return fps;}
     SDLWindow* getWindow()const{return window;}
 private:
+    void poll();
+
     bool running;
+    unsigned int fps;
     SDLWindow* window;
 };
 
