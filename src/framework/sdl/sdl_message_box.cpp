@@ -17,7 +17,7 @@ SDLMessageBox& SDLMessageBox::internalAddButton(int flags, const std::string& te
     buttons.push_back({flags, id, btt_text});
 }
 
-int show(Type type){
+int SDLMessageBox::show(Type type){
     int buttonId;
     SDL_MessageBoxData data = {type, window, title.c_str(), text.c_str(), buttons.size(), buttons.data(), nullptr};
 
@@ -25,13 +25,5 @@ int show(Type type){
         throw SDLError();
     }
     return buttonId;
-}
-
-void showSimple(Type type, const std::string& title, const std::string& text){
-    this->title = title;
-    this->text = text;
-    if(SDL_ShowSimpleMessageBox(type, title.c_str(), text.c_str(), window) == -1){
-        throw SDLError();
-    }
 }
 

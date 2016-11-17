@@ -43,7 +43,6 @@ public:
     }
 
     int show(Type type);
-    void showSimple(Type type, const std::string& title, const std::string& text);
 
     std::string& getTitle()const{return title;}
     std::string& getText()const{return text;}
@@ -56,5 +55,4 @@ private:
     std::string text;
     std::vector<SDL_MessageBoxButtonData> buttons;
 };
-
 #endif

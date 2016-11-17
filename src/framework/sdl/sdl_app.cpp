@@ -11,11 +11,10 @@ void SDLApplication::init(SubSystem flags){
 }
 
 void SDLApplication::quit(){
-	if(window && window->isAlive())
-		window->dispose();
+	running = false;
 }
 
-void SDLApplication::run(SDLWindow* window){
+void SDLApplication::run(const std::string& name, int width, int height, ApplicationListener* appListener){
     SDL_Event event;
     milliseconds now, prev(0), delta(0);
     FPSCounter fpsCounter(fps);
@@ -28,37 +27,52 @@ void SDLApplication::run(SDLWindow* window){
     
     running = true;
 
-    this->window = window;
-
 	try{
-		window->preLoop();
-		while (window->isAlive()){
+		this->name = name;
+		this->width = width;
+		this->height = height;
+		
+		createWindow();
+		appListener->onStart();
+		while (running){
 			fpsCounter.start();
 
-			poll();
+			while(SDL_PollEvent(&event)){
+				appListener->event(&event);
+			}
 
 			now = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
 			delta = now - prev;
 			prev = now;
 
-			window->process(delta);
+			appListener->process(delta);
 
 			if (fpsCounter.shouldRender()){
-				window->render(delta);
+				appListener->render(delta);
 			}
 			window->paint();
 			fpsCounter.delay();
 		}
-		window->posLoop();
+		appListener->onQuit();
 	}catch(std::exception& ex){
 	}
 
     running = false;
 }
 
-void SDLApplication::poll(){
-	SDL_Event event;
-	while(SDL_PollEvent(&event)){
-		window->event(&event);
+void SDLApplication::createWindow(){
+	window = new SDLWindow();
+
+	//default window configs
+	window->setTitle(name);
+	window->setPosition(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+	window->setSize(width, height);
+	window->create();
+}
+
+void SDLApplication::dispose(){
+	if(window && window->isAlive()){
+		window->dispose();
+		delete window;
 	}
 }

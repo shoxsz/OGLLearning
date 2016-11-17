@@ -5,8 +5,8 @@
 #include "sdl_app.hpp"
 
 SDLWindow::~SDLWindow(){
-	SDL_DestroyWindow(window);
-	SDL_GL_DeleteContext(gl);
+	if(window)
+		dispose();
 }
 
 void SDLWindow::create(const std::string& title, int x, int y, int w, int h, bool visible, bool fullscreen){
@@ -16,16 +16,20 @@ void SDLWindow::create(const std::string& title, int x, int y, int w, int h, boo
 		creationFlags |= SDL_WINDOW_SHOWN;
 	if (fullscreen)
 		creationFlags |= SDL_WINDOW_FULLSCREEN;
+	if(minimized)
+		creationFlags |= SDL_WINDOW_MINIMIZED;
+	if(maximized)
+		creationFlags |= SDL_WINDOW_MAXIMIZED;
 
 	window = SDL_CreateWindow(title.c_str(), x, y, w, h, creationFlags);
 
 	if (window == nullptr)
-		throw std::runtime_error(SDL_GetError());
+		throw SDLError();
 
 	gl = SDL_GL_CreateContext(window);
 
 	if (gl == nullptr)
-		throw std::runtime_error(SDL_GetError());
+		throw SDLError();
 
 	this->x = x;
 	this->y = y;
@@ -37,11 +41,33 @@ void SDLWindow::create(const std::string& title, int x, int y, int w, int h, boo
 }
 
 void SDLWindow::dispose(){
-	alive = false;
+	if(window){
+		SDL_DestroyWindow(window);
+		SDL_GL_DeleteContext(gl);
+		alive = false;
+		//notify the appllcation?
+	}
 }
 
 void SDLWindow::paint(){
 	SDL_GL_SwapWindow(window);
+}
+
+void SDLWindow::maximize(){
+	this->maximized = true;
+	if(window)
+		SDL_MaximizeWindow(window);
+}
+
+void SDLWindow::minimize(){
+	this->maximized = true;
+	if(window)
+		SDL_MaximizeWindow(window);
+}
+
+void SDLWindow::restore(){
+	if(window)
+		SDL_RestoreWindow(window);
 }
 
 void SDLWindow::setFullscreen(bool fullscreen){

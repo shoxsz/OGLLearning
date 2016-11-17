@@ -4,12 +4,7 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-#include "box.hpp"
-
-class SDLApplication;
-class SDLWindow;
-
-class SDLWindow : public Box{
+class SDLWindow{
 public:
 	friend class SDLApplication;
 
@@ -23,9 +18,12 @@ public:
 		y(0),
 		width(0),
 		height(0),
+		maximized(false),
+		minimized(false),
 		visible(false),
 		fullscreen(false),
 		alive(false){}
+		
 	virtual ~SDLWindow();
 
 	void create(bool visible = true){ create(title, x, y, width, height, visible, fullscreen); }
@@ -34,6 +32,9 @@ public:
 
 	void paint();
 
+	void maximize();
+	void minimize();
+	void restore();
 	void setFullscreen(bool fullscreen);
 	void setTitle(const std::string& title);
 	void setSize(int width, int height);
@@ -51,18 +52,12 @@ public:
 	bool isFullscreen()const{ return fullscreen; }
 	bool isCreated()const{ return alive; }
 
-protected:
-	virtual void event(SDL_Event* event){}
-	virtual void preLoop(){}
-	virtual void process(milliseconds delta) = 0;
-	virtual void render(milliseconds delta) = 0;
-	virtual void posLoop(){}
-
 private:
 	unsigned int creationFlags;
 	std::string title;
 	int x, y;
 	int width, height;
+	bool maximized, minimized;
 	bool visible, fullscreen;
 	SDL_Window* window;
 	SDL_GLContext gl;
