@@ -4,6 +4,8 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
+#include <string>
+
 class SDLWindow{
 public:
 	friend class SDLApplication;
@@ -48,9 +50,12 @@ public:
 	int getY()const{ return y; }
 	int getWidth()const{ return width; }
 	int getHeight()const{ return height; }
+	bool isAlive()const { return alive; }
 	bool isVisible()const{ return visible; }
 	bool isFullscreen()const{ return fullscreen; }
 	bool isCreated()const{ return alive; }
+
+	SDL_Window* getWindow()const { return window; }
 
 private:
 	unsigned int creationFlags;

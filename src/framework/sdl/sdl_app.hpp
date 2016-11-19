@@ -3,7 +3,9 @@
 
 #include <SDL.h>
 
-#include <utils\fps_counter.hpp>
+#include <memory>
+
+#include "fps_counter.hpp"
 
 #include "sdl_error.hpp"
 #include "sdl_window.hpp"
@@ -14,42 +16,44 @@ public:
     virtual void onQuit() = 0;
     virtual void logics(milliseconds delta) = 0;
     virtual void render(milliseconds delta) = 0;
-    virtual void pause() = 0;
-    virtual void resume() = 0;
+    virtual void pause() = 0;	//not being used yet
+    virtual void resume() = 0;	//not being used yet
     virtual void caught(SDL_Event* event) = 0;
 };
 
+/*Notes: this is a one window application, since it's an desktop application 
+maybe i chould give more control over the window to the application listener...*/
 class SDLApplication{
 private:
-    SDLApplication* app;
+    static SDLApplication* app;
 public:
-    static SDLApplication getInstance(){
-        if(app = nullptr)
+    static SDLApplication* getInstance(){
+        if(app == nullptr)
             app = new SDLApplication();
         return app;
     }
 
-    enum SubSystem{
-        Timer = SDL_INIT_TIMER,
-        Audio = SDL_INIT_AUDIO,
-        Video = SDL_INIT_VIDEO,
-        Joystick = SDL_INIT_JOYSTICK,
-        Haptic = SDL_INIT_HAPTC ,
-        GameController = SDL_INIT_GAMECONTROLLER,
-        Events = SDL_INIT_EVENTS,
-        All = SDL_INIT_EVERYTHING
-    }
+	enum SubSystem {
+		Timer = SDL_INIT_TIMER,
+		Audio = SDL_INIT_AUDIO,
+		Video = SDL_INIT_VIDEO,
+		Joystick = SDL_INIT_JOYSTICK,
+		Haptic = SDL_INIT_HAPTIC,
+		GameController = SDL_INIT_GAMECONTROLLER,
+		Events = SDL_INIT_EVENTS,
+		All = SDL_INIT_EVERYTHING
+	};
 
-    SDLApplication(const SDLApplication& app) = delete;
+	SDLApplication(const SDLApplication& app) = delete;
     SDLApplication& operator=(const SDLApplication& app) = delete;
     ~SDLApplication(){dispose();}
-
-    void setFPS(unsigned int fps){this->fps = fps;}
 
     void init(SubSystem flags = All);
     void quit();
 
     void run(const std::string& name, int width, int height, ApplicationListener* appListener);
+
+	void setFPS(unsigned int fps) { this->fps = fps; }
 
     bool isRunning()const{return running;}
     unsigned int getFPS()const{return fps;}
@@ -72,5 +76,7 @@ private:
     std::string name;
     int width, height;
 };
+
+typedef std::shared_ptr<SDLApplication> SDLApplicationPtr;
 
 #endif

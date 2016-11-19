@@ -35,9 +35,7 @@ void SDLWindow::create(const std::string& title, int x, int y, int w, int h, boo
 	this->y = y;
 	this->visible = visible;
 	this->fullscreen = fullscreen;
-	this->box.reset(new SDLBox(this));
 	this->alive = true;
-	resized(w, h);
 }
 
 void SDLWindow::dispose(){

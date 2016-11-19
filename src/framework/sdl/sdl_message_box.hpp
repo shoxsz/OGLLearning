@@ -6,17 +6,21 @@
 #include <vector>
 #include <string>
 
+#include "sdl_window.hpp"
+
+//MAKE IT BETTER
+
 class SDLMessageBox{
 public:
-    friend class SDLWindow;
-
     enum Type{
         Error = SDL_MESSAGEBOX_ERROR,
         Warning = SDL_MESSAGEBOX_WARNING,
         Information = SDL_MESSAGEBOX_INFORMATION
     };
 
-    SDLMessageBox(SDL_Window* window):window(window){}
+	static void showSimple(Type type, const std::string& title, const std::string& message);
+
+    SDLMessageBox(const SDLWindow& window):window(window.getWindow()){}
     ~SDLMessageBox();
 
     SDLMessageBox& button(const std::string& text, int id){
@@ -44,15 +48,16 @@ public:
 
     int show(Type type);
 
-    std::string& getTitle()const{return title;}
-    std::string& getText()const{return text;}
+    std::string& getTitle(){return title;}
+    std::string& getText(){return text;}
 
 private:
-    void internalAddButton(int flags, const std::string& text, int id);
+    void internalAddButton(unsigned int flags, const std::string& text, int id);
 
     SDL_Window* window;
     std::string title;
     std::string text;
     std::vector<SDL_MessageBoxButtonData> buttons;
 };
+
 #endif
