@@ -11,7 +11,8 @@ public:
     }
 
     enum AccessType{
-
+        Static,
+        Dynamic
     }
 
     void create(Type type, AccessType access);
