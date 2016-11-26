@@ -7,52 +7,90 @@
 #include "buffer_object.hpp"
 #include "utils/point.hpp"
 #include "utils/rect.hpp"
+#include "enums.hpp"
 
-/*Holds a buffer of vertices of a generic vertexType, these vertices are stored in a vector of dataType*/
+struct Vertex{
+	float x, y, z;
+}
+
+
 template<typename vertexType = Vertex, typename dataType = float>
 class Vertices{
 public:
-	Vertices() :
-		verticesCount(0),
-		vertexSize(sizeof(vertexType))
-	{}
+	Vertices(AccessType accessType):mustUpdate(false), invalidVbo(true), accessType(accessType){}
 
 	void addVertex(const vertexType& vertex);
-    void addTriangle(const vertexType& a, const vertexType& b, const vertexType& c);
-    void addRectangle(const vertexType& a, const vertexType& b, const vertexType& c, const vertexType& d);
 
-	unsigned int countVertices() const { return verticesCount; }
-	std::vector<unsigned int> getIndices(){return indices;}
-	const std::vector<float> buffer getVertices()const{return buffer;}
+	void setIndices(const unsigned int* indices, unsigned int n){
+		this->indices.clear();
+		this->indices.resize(n);
+		for(unsigned int i = 0; i < n; i++){
+			this->indices[i] = indices[i];
+		}
+	}
+
+	void setIndices(const std::vector<unsigned int>& indices){
+		this->indices = indices;
+	}
+
+	/*update the data into the vbo if needed
+	return true if update was needed*/
+	bool update(bool useIndices = false);
+
+	void clear(){
+		invalidVbo = true;
+		posBuffer.dispose();
+		indBuffer.dispose();
+		coords.clear();
+		indices.clear();
+	}
+
+	AccessType getAccessType()const{ return accessType; }
+	unsigned int countVertices()const{ return coords.size() / sizeof(vertexType); }
+	const std::vector<unsigned int>& getIndices()const{ return indices; }
+	const std::vector<float>& getCoords()const{ return coords; }
 
 protected:
-	unsigned int vertexSize;
-	unsigned int verticesCount;
+	AccessType accessType;
+
+	bool mustUpdate;
+
+	BufferObject posBuffer;
+	BufferObject indBuffer;
+	std::vector<dataType> coords;
 	std::vector<unsigned int> indices;
-	std::vector<dataType> buffer;
 };
 
 template<typename vertexType = Vertex>
 void Vertices<vertexType>::addVertex(const vertexType& vertex){
-	unsigned int offset = buffer.size() * sizeof(dataType);
-	buffer.insert(0, vertexSize);
-	memcpy(buffer.data() + size, &vertex, vertexSize);
-	verticesCount++;
+	unsigned int oldSize = coords.size();
+	//the division is >= 1 since vertexType is(must be) composed only of dataType data
+	coords.insert(coords.end(), sizeof(vertexType) / sizeof(dataType), 0);
+	//raw copy of the data
+	memcpy(buffer.data() + oldSize, &vertex, sizeof(vertexType));
+	mustUpdate = true;
 }
 
 template<typename vertexType = Vertex>
-void Vertices<vertexType>::addTriangle(const vertexType& a, const vertexType& b, const vertexType& c){
-	addVertex(a);
-	addVertex(b);
-	addVertex(c);
-}
+bool Vertices<vertexType>::update(bool useIndices){
+	if(mustUpdate && coords.size() > 0){
+		if(!posBuffer.isCreated())
+			posBuffer.create();
 
-template<typename vertexType = Vertex>
-void Vertices<vertexType>::addRectangle(const vertexType& a, const vertexType& b, const vertexType& c, const vertexType& d){
-	addVertex(a);
-	addVertex(b);
-	addVertex(c);
-	addVertex(d);
+		posBuffer.allocate((void*)coords.data(), coords.size() * sizeof(dataType), Array, accessType);
+
+		if(useIndices && indices.size() > 0){
+			if(!indBuffer.isCreated())
+				indBuffer.create();
+			
+			indBuffer.allocate((void*)indices.data(), indices.size() * sizeof(unsigned int), Index, accessType);
+		}
+
+		mustUpdate = false;
+
+		return true;
+	}
+	return false;
 }
 
 #endif

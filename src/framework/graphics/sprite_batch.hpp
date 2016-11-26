@@ -5,17 +5,20 @@
 #include "vertices.hpp"
 
 struct SpriteVertex{
-	enum{ UseTexture = true };
     float x, y;
-	float u, v;
+};
+
+struct TextureVertex{
+    float u, v;
 };
 
 /*2D sprite batch*/
 class SpriteBatch{
 public:
+
 private:
-    BufferObject vbo;
-    Vertices<SpriteVertice> vertices;
+    Vertices<SpriteVertex> vertex;
+    Vertices<TextureVertex> texture;
 };
 
 #endif

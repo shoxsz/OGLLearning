@@ -3,34 +3,27 @@
 
 #include <SDL_opengl.h>
 
+#include "enums.hpp"
+
 class BufferObject{
 public:
-    enum Type{
-        Array = GL_ARRAY_BUFFER,
-        Index = GL_ELEMENT_ARRAY_BUFFER
-    }
+    BufferObject():created(false), id(0){}
 
-    enum AccessType{
-        Static,
-        Dynamic
-    }
-
-    void create(Type type, AccessType access);
+    void create();
     void dispose();
 
     void bind();
     
-    void allocate(const void* data, unsigned int dize);
-    void write(const void* data, unsigned int offset, unsigned int size);
+    //glBufferData
+    void allocate(const void* data, unsigned int size, Type type, AccessType accessType);
+    //glBufferSubdata
+    void write(const void* data, unsigned int offset, unsigned int size, Type type);
 
-    Type getType()const{return type;}
-    AccessType getAccessType()const{return acessType;}
+    bool isCreated()const{return created;}
 
 private:
-    Type type;
-    AccessType accessType;
+    bool created;
     unsigned int id;
-    unsigned int size;
 };
 
 #endif
