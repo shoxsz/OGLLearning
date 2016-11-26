@@ -4,6 +4,10 @@ Texture2D::Texture2D(const Size& size, ImageFormat format){
     updatePixels(size, nullptr, format);
 }
 
+Texture2D::~Texture2D(){
+    dispose();
+}
+
 void Texture2D::dispose(){
     if(created){
         glDeleteTextures(1, id);
@@ -60,4 +64,5 @@ void Texture2D::updatePixels(Size& size, void* pixels, ImageFormat format){
     }
 
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, size.width(), size.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
+    this->size = size;
 }

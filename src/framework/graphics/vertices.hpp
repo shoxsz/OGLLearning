@@ -20,6 +20,9 @@ public:
 	Vertices(AccessType accessType):mustUpdate(false), invalidVbo(true), accessType(accessType){}
 
 	void addVertex(const vertexType& vertex);
+	void addIndice(unsigned int indice){
+		indices.push_back(indice);
+	}
 
 	void setIndices(const unsigned int* indices, unsigned int n){
 		this->indices.clear();
@@ -67,7 +70,7 @@ void Vertices<vertexType>::addVertex(const vertexType& vertex){
 	//the division is >= 1 since vertexType is(must be) composed only of dataType data
 	coords.insert(coords.end(), sizeof(vertexType) / sizeof(dataType), 0);
 	//raw copy of the data
-	memcpy(buffer.data() + oldSize, &vertex, sizeof(vertexType));
+	memcpy(coords.data() + oldSize, &vertex, sizeof(vertexType));
 	mustUpdate = true;
 }
 

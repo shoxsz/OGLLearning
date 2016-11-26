@@ -30,4 +30,9 @@ enum ImageFormat{
     RGB = GL_RGB
 }
 
+enum ShaderType{
+    VertexShader = GL_VERTEX_SHADER,
+    FragmentShader = GL_FRAGMENT_SHADER
+}
+
 #endif

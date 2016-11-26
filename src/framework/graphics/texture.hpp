@@ -12,6 +12,7 @@ public:
 
     Texture2D():hasMipmap(false), created(false), unit(0), id(0){}
     Texture2D(const Size& size, ImageFormat format);
+    ~Texture2D();
 
     void dispose();
 
@@ -26,6 +27,10 @@ public:
         this->unit = unit;
     }
 
+    const Size& getSize()const{ 
+        return size; 
+    }
+
     unsigned int getUnit()const{
         return unit;
     }
@@ -33,6 +38,7 @@ public:
 private:
     void updatePixels(void* pixels, Size& size, ImageFormat format);
 
+    Size size;
     bool hasMipmap;
     bool created;
     Wrapping wrap;
@@ -41,5 +47,7 @@ private:
     unsigned int unit;
     unsigned int id;
 };
+
+typedef std::shared_ptr<Texture2D> Texture2DPtr;
 
 #endif
