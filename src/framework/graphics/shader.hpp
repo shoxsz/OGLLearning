@@ -4,26 +4,41 @@
 #include "enums.hpp"
 
 #include <string>
+#include <memory>
 
 class Shader{
 public:
-    enum {max_shader_bytes = 1048576;/*2^20*/}
+    friend class ShaderProgram;
 
-    Shader():loaded(false), compiled(false){}
+    //copy is not allowed
+    Shader(const Shader& shader) = delete;
+    Shader& operator=(const Shader& shader) = delete;
+
+    Shader():loaded(false), compiled(false), attached(false){}
+    ~Shader(){dispose();}
+
+    void dispose();
 
     void load(const std::string& file);
     void compile();
+    void attachToProgram(unsigned int program);
+    void detach();
 
     bool isLoaded()const{ return loaded; }
     bool isCompiled()const{ return compiled; }
+    bool isAttached()const{ return attached; }
 
 private:
-    void checkErrors();
+    void checkErrors(GLenum param);
 
     bool loaded;
     bool compiled;
+    bool attached;
+    unsigned int program;
     unsigned int shader;
     ShaderType type;
 };
+
+std::shared_ptr<Shader> ShaderPtr;
 
 #endif

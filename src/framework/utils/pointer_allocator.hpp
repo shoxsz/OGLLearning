@@ -3,37 +3,46 @@
 
 #include <memory>
 
-/*allocator for raw pointers*/
+/*allocator for use with raw pointer and stl containers
 
-template<class T, bool is_char>
+for example:
+    std::vector<int*, pointer_allocator<int*>>
+
+this calss considers that the type in the container is a vector
+and deallocates it as one*/
+
+template<class type>
 class pointer_allocator{
-  typedef T value_type;
+public:
+    typedef type value_type;
+    pointer_allocator(){}
 
-  pointer_allocator(){}
+    value_type* allocate(std::size_t n){
+        value_type* data = new value_type[n];
 
-  template <class U> pointer_allocator(const pointer_allocator<U>& other);
+        for(unsigned int i = 0; i < n; i++)
+            data[i] = nullptr;
+            
+        return data;
+    }
 
-  T* allocate(std::size_t n){
-      T* data = new T[n];
-
-      if(is_char)
-        data[n-1] = '\0';
-
-      return data;
-  }
-
-  void deallocate(T* data, std::size_t n){
-      delete [] data;
-  }
+    void deallocate(value_type* data, std::size_t n){
+        for(unsigned int i = 0; i < n; i++){
+            delete [] (data[i]);
+        }
+        delete data;
+    }
 };
-template <class T, class U>
-bool operator==(const pointer_allocator<T>&, const pointer_allocator<U>&){
-    return true;//the deallocate method can deallocate any type
+
+template <class value_type, class U>
+bool operator==(const pointer_allocator<value_type>&, const pointer_allocator<U>&){
+    return true;
 }
 
-template <class T, class U>
-bool operator!=(const pointer_allocator<T>&, const pointer_allocator<U>&){
+template <class value_type, class U>
+bool operator!=(const pointer_allocator<value_type>&, const pointer_allocator<U>&){
     return false;
 }
+
 
 #endif
