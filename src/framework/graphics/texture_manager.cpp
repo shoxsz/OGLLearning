@@ -1,6 +1,7 @@
 #include "texture_manager.hpp"
 
 #include <SDL_opengl.h>
+#include "third/lodepng.hpp"
 
 void TextureManager::load(const std::string& texture){
     unsigned int pos = texture.find_last_of('.');

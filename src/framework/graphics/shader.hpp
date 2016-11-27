@@ -4,6 +4,7 @@
 #include "enums.hpp"
 
 #include <string>
+#include <fstream>
 #include <memory>
 
 class Shader{
@@ -20,6 +21,7 @@ public:
     void dispose();
 
     void load(const std::string& file);
+    void load(std::ifstream& source);
     void compile();
     void attachToProgram(unsigned int program);
     void detach();

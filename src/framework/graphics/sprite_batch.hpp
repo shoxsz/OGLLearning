@@ -3,6 +3,7 @@
 
 #include "vertices.hpp"
 #include "texture.hpp"
+#include "shader_program.hpp"
 
 struct SpriteVertex{
     float x, y;
@@ -15,7 +16,7 @@ struct TextureVertex{
 /*This will use shader program to render all the data*/
 
 /*2D sprite batch*/
-class SpriteBatch{
+class SpriteBatch : public ShaderProgram{
 public:
     SpriteBatch():drawing(false), maxVertices(1024){}
 
@@ -37,6 +38,8 @@ public:
     unsigned int getMaxVertices()const{ return vertices; }
 
 private:
+    virtual void preLink();
+
     bool drawing;
     unsigned int maxVertices;
 

@@ -2,9 +2,6 @@
 
 #include "utils/pointer_allocator.hpp"
 
-#include <fstream>
-#include <algorithm>
-
 void Shader::dispose(){
     if(loaded){
         if(attached)
@@ -17,6 +14,10 @@ void Shader::dispose(){
 
 void Shader::load(const std::string& file){
     std::ifstream source(file);
+    load(source);
+}
+
+void Shader::load(std::ifstream& source){
     std::vector<char*, pointer_allocator<char*>> file_lines;
 
     if(!source.is_open())
@@ -33,6 +34,10 @@ void Shader::load(const std::string& file){
 
     while(!source.eof()){
         source.getline(line, 1024);
+
+        if(source.fail())
+            throw std::runtime_error("Failed to read shader source!");
+
         file_lines.push_back(std::string(line, strlen(line)));
     }
 
