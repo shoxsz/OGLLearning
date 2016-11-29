@@ -25,7 +25,7 @@ enum Filtering{
     LinearMipmap = GL_LINEAR_MIPMAP_LINEAR
 }
 
-enum ImageFormat{
+enum PixelFormat{
     RGBA = GL_RGBA,
     RGB = GL_RGB
 }

@@ -1,21 +1,37 @@
 #include "texture_manager.hpp"
 
 #include <SDL_opengl.h>
-#include "third/lodepng.hpp"
+#include <SDL_image.h>
 
-void TextureManager::load(const std::string& texture){
-    unsigned int pos = texture.find_last_of('.');
+Texture2Dptr TextureManager::add(const std::string& name, Texture2DPtr texture){
+    textures[name] = texture;
+}
 
-    if(pos == std::string::npos)
-        throw std::runtime_error("image extension not specified!");
+void TextureManager::load(const std::string& texture, bool mipmaps){
+    Texture2DPtr tex2D;
+    SDL_Surface* image;
+    PixelFormat format;
 
-    std::string ext = text.substr(pos);
+    image = IMG_Load(texture.c_str());
 
-    if(ext == "png"){
-        //load png
-    }else if(ext == "bmp"){
-        //load bmp
+    if(image == nullptr)
+        throw std::runtime_error(SDL_GetError());
+
+    switch(image->format->BytesPerPixel){
+        case 4:
+            format = RGBA;
+        break;
+        case 3:
+            format = RGB;
+        break;
     }
+
+    tex2D.reset(new Texture2D());
+    tex2D->write(image->pixels, Size(image->w, image->h), format);
+
+    textures[texture] = tex2D;
+
+    return tex2D;
 }
 
 Texture2DPtr TextureManager::get(const std::string& texture){

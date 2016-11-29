@@ -2,6 +2,7 @@
 #define _SDL_APPLICATION_HPP_
 
 #include <SDL.h>
+#include <SDL_image.h>
 
 #include <memory>
 

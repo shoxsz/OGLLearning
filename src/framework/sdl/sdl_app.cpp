@@ -8,6 +8,9 @@ void SDLApplication::init(SubSystem flags){
 	if (SDL_Init(flags) != 0)
 		throw SDLError();
 
+	if(IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF) == 0)
+		throw SDLError();
+
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 

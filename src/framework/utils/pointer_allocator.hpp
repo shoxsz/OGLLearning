@@ -8,8 +8,8 @@
 for example:
     std::vector<int*, pointer_allocator<int*>>
 
-this calss considers that the type in the container is a vector
-and deallocates it as one*/
+this class considers that the type in the container is a vector
+and deallocates it as such*/
 
 template<class type>
 class pointer_allocator{

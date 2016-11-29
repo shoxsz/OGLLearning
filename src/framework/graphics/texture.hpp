@@ -11,7 +11,7 @@ public:
     friend class TextureManager;
 
     Texture2D():hasMipmap(false), created(false), unit(0), id(0){}
-    Texture2D(const Size& size, ImageFormat format);
+    Texture2D(const Size& size, PixelFormat format);
     ~Texture2D();
 
     void dispose();
@@ -20,9 +20,10 @@ public:
 
     void setWrapping(Wrapping wrap);
     void setFiltering(Filtering filter);
-    void write(void* pixels, Size& size, bool mipmaps = true);
+    void write(void* pixels, Size& size, PixelFormat format);
     void buildMipmaps(unsigned min, unsigned int max);
 
+    //set the image unit that the texture will be attached to before binding
     void setUnit(unsigned int unit){
         this->unit = unit;
     }
@@ -36,7 +37,7 @@ public:
     }
 
 private:
-    void updatePixels(void* pixels, Size& size, ImageFormat format);
+    void updatePixels(void* pixels, Size& size, PixelFormat format);
 
     Size size;
     bool hasMipmap;

@@ -23,6 +23,7 @@ void Shader::load(std::ifstream& source){
     if(!source.is_open())
         throw std::runtime_error("Failed to load shader!");
 
+    //the first line must identify the shader type
     source.getline(line, 1024);
     if(!strcmp(line, "vertex")){
         type = VertexShader;
