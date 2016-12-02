@@ -1,7 +1,9 @@
 #ifndef _TEXTURE_HPP_
 #define _TEXTURE_HPP_
 
-#include <SDL_opengl.h>
+#include <memory>
+
+#include <gl/glew.h>
 
 #include "enums.hpp"
 #include "utils/size.hpp"
@@ -19,8 +21,8 @@ public:
     void bind();
 
     void setWrapping(Wrapping wrap);
-    void setFiltering(Filtering filter);
-    void write(void* pixels, Size& size, PixelFormat format);
+    void setFiltering(Filtering minFilter, Filtering magFilter);
+    void write(void* pixels, const Size& size, PixelFormat format);
     void buildMipmaps(unsigned min, unsigned int max);
 
     //set the image unit that the texture will be attached to before binding
@@ -37,7 +39,7 @@ public:
     }
 
 private:
-    void updatePixels(void* pixels, Size& size, PixelFormat format);
+    void updatePixels(void* pixels, const Size& size, PixelFormat format);
 
     Size size;
     bool hasMipmap;

@@ -1,6 +1,8 @@
 #ifndef _ENUMS_HPP_
 #define _ENUMS_HPP_
 
+#include <gl/glew.h>
+
 enum Type{
     Array = GL_ARRAY_BUFFER,
     Index = GL_ELEMENT_ARRAY_BUFFER

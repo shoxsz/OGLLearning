@@ -3,42 +3,49 @@
 #include <SDL_opengl.h>
 #include <SDL_image.h>
 
-Texture2Dptr TextureManager::add(const std::string& name, Texture2DPtr texture){
+void TextureManager::add(const std::string& name, Texture2DPtr texture){
     textures[name] = texture;
 }
 
-void TextureManager::load(const std::string& texture, bool mipmaps){
-    Texture2DPtr tex2D;
-    SDL_Surface* image;
-    PixelFormat format;
+Texture2DPtr TextureManager::load(const std::string& texture, bool mipmaps){
+	auto& tex = textures.find(texture);
 
-    image = IMG_Load(texture.c_str());
+	if (tex == textures.end()) {
+		Texture2DPtr tex2D;
+		SDL_Surface* image;
+		PixelFormat format;
 
-    if(image == nullptr)
-        throw std::runtime_error(SDL_GetError());
+		image = IMG_Load(texture.c_str());
 
-    switch(image->format->BytesPerPixel){
-        case 4:
-            format = RGBA;
-        break;
-        case 3:
-            format = RGB;
-        break;
-    }
+		if (image == nullptr)
+			throw std::runtime_error(SDL_GetError());
 
-    tex2D.reset(new Texture2D());
-    tex2D->write(image->pixels, Size(image->w, image->h), format);
+		switch (image->format->BytesPerPixel) {
+		case 4:
+			format = RGBA;
+			break;
+		case 3:
+			format = RGB;
+			break;
+		}
 
-    textures[texture] = tex2D;
+		tex2D.reset(new Texture2D());
+		tex2D->write(image->pixels, Size(image->w, image->h), format);
 
-    return tex2D;
+		textures[texture] = tex2D;
+
+		return tex2D;
+	}
+	else {
+		return tex->second;
+	}
 }
 
-Texture2DPtr TextureManager::get(const std::string& texture){
-    auto& tex = texture.find(texture);
+Texture2DPtr TextureManager::get(const std::string& texture, bool mipmaps){
+    auto& tex = textures.find(texture);
 
-    if(tex == textures.end())
-        return Texture2DPtr(nullptr);
+	if (tex == textures.end())
+		return load(texture);
     
     return tex->second;
 }

@@ -1,4 +1,4 @@
-#include "shader.hpp"
+#include "graphics/shader.hpp"
 
 #include "utils/pointer_allocator.hpp"
 
@@ -6,7 +6,7 @@ void Shader::dispose(){
     if(loaded){
         if(attached)
             detach();
-        glDeleteShader(shader);
+		glDeleteShader();
         loaded = false;
         compiled = false;
     }

@@ -1,7 +1,7 @@
 #include "texture.hpp"
 
 Texture2D::Texture2D(const Size& size, PixelFormat format){
-    updatePixels(size, nullptr, format);
+    updatePixels(nullptr, size, format);
 }
 
 Texture2D::~Texture2D(){
@@ -10,7 +10,7 @@ Texture2D::~Texture2D(){
 
 void Texture2D::dispose(){
     if(created){
-        glDeleteTextures(1, id);
+        glDeleteTextures(1, &id);
         created = false;
     }
 }
@@ -42,29 +42,29 @@ void Texture2D::setFiltering(Filtering minFilter, Filtering magFilter){
     }
 }
 
-void Texture2D::write(void* pixels, Size& size, PixelFormat format){
+void Texture2D::write(void* pixels, const Size& size, PixelFormat format){
     //just a wrapper? for now yes
     updatePixels(pixels, size, format);
 }
 
 void Texture2D::buildMipmaps(unsigned int min, unsigned int max){
-    glTextParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, min);
-    glTextParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, max);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, min);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, max);
 
     hasMipmap = true;
 
     //update filtering to mipmap filters
     setFiltering(minFilter, magFilter);
 
-    glGenerateMipmap(GL_TEXTURE_2D);
+    //glGenerateMipmap(GL_TEXTURE_2D);
 }
 
-void Texture2D::updatePixels(void* pixels, Size& size, PixelFormat format){
+void Texture2D::updatePixels(void* pixels, const Size& size, PixelFormat format){
     if(!created){
         glGenTextures(1, &id);
         created = true;
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, size.width(), size.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, size.w, size.h, 0, format, GL_UNSIGNED_BYTE, pixels);
     this->size = size;
 }

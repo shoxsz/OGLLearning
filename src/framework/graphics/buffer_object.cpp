@@ -1,8 +1,6 @@
 #include "buffer_object.hpp"
 
-void BufferObject::create(Type type, AccessType access){
-    this->type = type;
-    this->accessType = access;
+void BufferObject::create(){
     glGenBuffers(1, &id);
     created = true;
 }
