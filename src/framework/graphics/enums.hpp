@@ -37,10 +37,4 @@ enum ShaderType{
     FragmentShader = GL_FRAGMENT_SHADER
 }
 
-enum VertexAttributes{
-    PositionAttribute = 0,
-    ColorAttribute = 1,
-    TextureAttribute = 2
-}
-
 #endif

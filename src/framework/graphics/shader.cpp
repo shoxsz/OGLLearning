@@ -1,12 +1,13 @@
 #include "graphics/shader.hpp"
-
 #include "utils/pointer_allocator.hpp"
+
+#include <vector>
 
 void Shader::dispose(){
     if(loaded){
         if(attached)
             detach();
-		glDeleteShader();
+		glDeleteShader(shader);
         loaded = false;
         compiled = false;
     }
@@ -36,7 +37,7 @@ void Shader::load(std::ifstream& source){
     }
 
     while(!source.eof()){
-        line = new line[1025];
+        line = new char[1025];
         source.getline(line, 1024);
 
         if(source.fail())
@@ -46,23 +47,22 @@ void Shader::load(std::ifstream& source){
     }
 
      shader = glCreateShader(type);
-     glShaderSource(shader, fileLine.data(), nullptr);
-     checkErrors();
+	 glShaderSource(shader, file_lines.size(), file_lines.data(), nullptr);
      loaded = true;
 }
 
 void Shader::compile(){
     if(loaded){
         glCompileShader(shader);
-        checkErrors();
+		checkErrors(GL_COMPILE_STATUS);
         compiled = true;
     }
 }
 
 void Shader::attachToProgram(unsigned int program){
     if(compiled){
-        glAttachShader​(program​, shader​);
-        checkProgramError(program);
+		//this can fail if the program is not valid!
+		glAttachShader(program, shader);
         attached = true;
         this->program = program;
     }
@@ -70,7 +70,7 @@ void Shader::attachToProgram(unsigned int program){
 
 void Shader::detach(){
     if(attached){
-        glDetachShader​(program​, shader​);
+		glDetachShader(program, shader);
         program = 0;
         attached = false;
     }
@@ -81,7 +81,7 @@ void Shader::checkErrors(GLenum param){
     glGetShaderiv(shader, param, &status);
 
     if(status == GL_FALSE){
-        unsigned int log_size;
+        int log_size;
         std::vector<char> log;
 
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &log_size);

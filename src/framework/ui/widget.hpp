@@ -37,7 +37,7 @@ public:
 
 	void draw();
 
-	/*seta a área do widget, o widget é posicionado em relação ao seu pai*/
+	/*Specify the area used by this widget, it is relative to its parent*/
 	void setShape(const Rect& rect){ this->rect = rect; }
 	Rect& getShape(){ return rect; }
 	const Rect& getShape()const{ return rect; }
@@ -56,7 +56,7 @@ public:
 	void makeEditable(bool editable){ this->editable = editable; }
 	bool isEditable()const{ return editable; }
 
-	/*retorna a forma não relativa ao pai do widget*/
+	/*returns the position relative to the window*/
 	Position getRealPosition()const{
 		if (parent != nullptr)
 			return pos + parent->getRealPosition();
@@ -79,6 +79,7 @@ public:
 	bool keyUp(unsigned int key);
 	bool textInput(const std::string& text);
 
+	/*return the container that holds this widget children*/
 	Container* getContainer()const{ return container.get(); }
 
 	void setParent(Widget* parent){ 

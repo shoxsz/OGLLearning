@@ -5,6 +5,11 @@
 
 class ShaderProgram{
 public:
+	enum VertexAttributes {
+		PositionAttribute = 0,
+		ColorAttribute = 1,
+		TextureAttribute = 2
+	};
 
     //copy is not allowed
     ShaderProgram(const ShaderProgram& program) = delete;

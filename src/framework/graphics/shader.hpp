@@ -41,6 +41,6 @@ private:
     ShaderType type;
 };
 
-std::shared_ptr<Shader> ShaderPtr;
+typedef std::shared_ptr<Shader> ShaderPtr;
 
 #endif

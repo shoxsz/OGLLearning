@@ -66,6 +66,7 @@ add_library(SDLApplication
             #utils
                 ${UTILS_DIR}/color.hpp
                 ${UTILS_DIR}/fps_counter.hpp
+                ${UTILS_DIR}/matrix.hpp
                 ${UTILS_DIR}/point.hpp
                 ${UTILS_DIR}/pointer_allocator.hpp
                 ${UTILS_DIR}/rect.hpp
