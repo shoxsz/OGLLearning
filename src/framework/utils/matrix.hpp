@@ -4,29 +4,30 @@
 #include <array>
 #include <stdexcept>
 
-template<typename dataType = float, unsigned int columns = 2, unsigned int rows = 2>
+template<typename dataType = float, unsigned int columns = 3, unsigned int rows = 3>
 class Matrix{
 public:
     typedef Matrix<dataType, columns, rows> MyMatrix;
     typedef Matrix<dataType, rows, columns> MyTranspost;
 
-    Matrix(bool loadIdentity = true){ 
-        if(loadIdentity)
-            this->loadIdentity();
-        else
-            matrix->fill(0);
+    Matrix(){
+        matrix.fill(0);
+    }
+
+    Matrix(std::initializer_list<dataType> list){
+        set(list);
     }
 
     void loadIdentity(){
         matrix.fill(0);
-        for(unsigned int i = 0; i < columns; i++;){
+        for(unsigned int i = 0; i < columns; i++){
             matrix[i * columns + i] = 1;
         }
     }
 
     MyTranspost transpose(){
         unsigned int line, m_line;
-        MyTranspost transpost(false);
+        MyTranspost transpost;
 
         for(unsigned int i = 0; i < columns; i++){
             line = i * columns;
@@ -39,50 +40,57 @@ public:
         return transpost;
     }
 
-    void set(dataType* matrix){
+    void set(const dataType* matrix){
         unsigned int elems = columns * rows;
         for(unsigned int i = 0; i < elems; i++){
             this->matrix[i] = matrix;
         }
     }
 
+    void set(std::initializer_list<dataType> list){
+        auto list_it = list.begin();
+        unsigned int elems = rows * columns;
+        for(unsigned int i = 0; i < elems; i++, list_it++){
+            matrix[i] = *list_it;
+        }
+    }
+
     const dataType* get()const{ return matrix.data(); }
 
     void scale(const dataType& scalar){
-        unsigned int elems = row * columns;
+        unsigned int elems = rows * columns;
         for(unsigned int i = 0; i < elems; i++){
             this->matrix[i] *= scalar;
         }
     }
 
-    void add(const MyMatrix& matrix){
-        unsigned int elems = row * columns;
+    void sum(const MyMatrix& matrix){
+        unsigned int elems = rows * columns;
         for(unsigned int i = 0; i < elems; i++){
             this->matrix[i] += matrix.matrix[i];
         }
     }
 
     void sub(const MyMatrix& matrix){
-        unsigned int elems = row * columns;
+        unsigned int elems = rows * columns;
         for(unsigned int i = 0; i < elems; i++){
             this->matrix[i] -= matrix.matrix[i];
         }
     }
 
     template<unsigned int _columns = columns, unsigned int _rows = rows>
-    Matrix<rows, _columns> mult(Matrix<dataType, _columns, _rows>& matrix)const{
-        Matrix<rows, _columns> result(false);
-        unsigned int line, m_line;
+    Matrix<dataType, rows, _columns> mult(Matrix<dataType, _columns, _rows>& matrix)const{
+        Matrix<dataType, rows, _columns> result;
+        unsigned int line;
 
         if(columns != _rows && _columns != rows)
-            std::invalid_argument("Matrices informed can't be multiplied!'");
+            throw std::invalid_argument("Matrices informed can't be multiplied!'");
         
         for(unsigned int i = 0; i < rows; i++){
             line = i * rows;
             for(unsigned int j = 0; j < columns; j++){
-                m_line = j * rows;
                 for(unsigned int k = 0; k < columns; k++){
-                    result->matrix[line + k] += transpost.matrix[line + j] * matrix[m_line + i];
+                    result[i][j] += this->matrix[line + k] * matrix[k][j];
                 }
             }
         }
@@ -123,8 +131,12 @@ public:
         sub(matrix);
     }
 
-    const float* operator[](unsigned int row)const{
-        return M[row * columns];
+    const dataType* operator[](unsigned int row)const{
+        return matrix.data() + (row * columns);
+    }
+
+    dataType* operator[](unsigned int row){
+        return matrix.data() + (row * columns);
     }
 
 private:

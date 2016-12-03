@@ -1,24 +1,40 @@
 #ifndef _SPRITE_BATCH_HPP_
 #define _SPRITE_BATCH_HPP_
 
+#include "definitions.hpp"
 #include "vertices.hpp"
 #include "texture.hpp"
 #include "shader_program.hpp"
 
-struct SpriteVertex{
+struct CoordAttribute2D{
     float x, y;
 };
 
-struct TextureVertex{
+struct TextureAttribute2D{
     float u, v;
 };
 
-/*This will use shader program to render all the data*/
-
 /*2D sprite batch*/
-class SpriteBatch : public ShaderProgram{
+class SpriteBatch{
 public:
-    SpriteBatch():drawing(false), maxVertices(1024){}
+	static const AttributeSpec coordAttribute;
+	static const AttributeSpec texAttribute;
+
+	static const std::string modelviewName;
+	static const std::string projectionName;
+
+    SpriteBatch():drawing(false), maxVertices(1024), coords(Dynamic), texCoords(Dynamic){
+		loadDefaultProgram();
+	}
+
+	/*set the shaders to be used with the shader program, the shaders must name its attributes and uniforms as specified by this batcher */
+	SpriteBatch(ShaderPtr vertexShader, ShaderPtr fragmentShader) :drawing(false), maxVertices(1024), coords(Dynamic), texCoords(Dynamic) {
+		setShaders(vertexShader, fragmentShader);
+	}
+
+	/*set the shaders to be used with the shader program, it will cause the sahder program to be
+	recreated, the shaders must name its attributes and uniforms as specified by this batcher */
+	void setShaders(ShaderPtr vertexShader, ShaderPtr fragmentShader);
 
     //max vertices to use in the vbo's, when the limit is reached the vertex will be sent to the gpu
     void setMaxVertices(unsigned int vertices){
@@ -35,17 +51,24 @@ public:
     //draw the specified src from the texture inside the dst
     void drawRect(Rect& src, Rect& dst);
 
-    unsigned int getMaxVertices()const{ return vertices; }
+    unsigned int getMaxVertices()const{ return coords.countVertices(); }
 
 private:
-    virtual void preLink();
+	void loadDefaultProgram();
 
     bool drawing;
     unsigned int maxVertices;
 
     Texture2DPtr currentTexture;
-    Vertices<SpriteVertex> vertex;
-    Vertices<TextureVertex> texture;
+    Vertices<CoordAttribute2D> coords;
+    Vertices<TextureAttribute2D> texCoords;
+	ShaderProgram shaderProgram;
+
+	Matrix3 modelviewMatrix;
+	Matrix3 projectionMatrix;
+
+	unsigned int modelviewLocal;
+	unsigned int projectionLocal;
 };
 
 #endif

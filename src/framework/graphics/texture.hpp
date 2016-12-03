@@ -51,6 +51,4 @@ private:
     unsigned int id;
 };
 
-typedef std::shared_ptr<Texture2D> Texture2DPtr;
-
 #endif

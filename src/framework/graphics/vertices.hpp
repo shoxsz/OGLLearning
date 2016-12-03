@@ -11,8 +11,7 @@
 
 struct Vertex{
 	float x, y, z;
-}
-
+};
 
 template<typename vertexType = Vertex, typename dataType = float>
 class Vertices{

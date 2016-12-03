@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <string>
 
+#include "definitions.hpp"
 #include "texture.hpp"
 
 class TextureManager{

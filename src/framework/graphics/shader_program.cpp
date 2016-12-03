@@ -9,7 +9,7 @@ void ShaderProgram::dispose(){
     }
 }
 
-void ShaderProgram::link(){
+void ShaderProgram::link(const std::initializer_list<AttributeSpec>& attributes){
     if(!vertexShader || !fragmentShader)
         return;
 
@@ -21,7 +21,9 @@ void ShaderProgram::link(){
     vertexShader->attachToProgram(program);
     fragmentShader->attachToProgram(program);
 
-    preLink();
+	for (const AttributeSpec& attr : attributes) {
+		glBindAttribLocation(program, attr.local, attr.name.c_str());
+	}
 
     glLinkProgram(program);
     checkProgramError();

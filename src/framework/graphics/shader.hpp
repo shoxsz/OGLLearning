@@ -4,7 +4,7 @@
 #include "enums.hpp"
 
 #include <string>
-#include <fstream>
+#include <istream>
 #include <memory>
 
 class Shader{
@@ -21,7 +21,7 @@ public:
     void dispose();
 
     void load(const std::string& file);
-    void load(std::ifstream& source);
+    void load(std::istream& source);
     void compile();
     void attachToProgram(unsigned int program);
     void detach();
@@ -40,7 +40,5 @@ private:
     unsigned int shader;
     ShaderType type;
 };
-
-typedef std::shared_ptr<Shader> ShaderPtr;
 
 #endif

@@ -2,6 +2,7 @@
 #include "utils/pointer_allocator.hpp"
 
 #include <vector>
+#include <fstream>
 
 void Shader::dispose(){
     if(loaded){
@@ -18,12 +19,12 @@ void Shader::load(const std::string& file){
     load(source);
 }
 
-void Shader::load(std::ifstream& source){
+void Shader::load(std::istream& source){
     char* line;
     char vertexType[1025];
     std::vector<char*, pointer_allocator<char*>> file_lines;
 
-    if(!source.is_open())
+    if(!source.good())
         throw std::runtime_error("Failed to load shader!");
 
     //the first line must identify the shader type
