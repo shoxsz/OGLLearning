@@ -1,15 +1,15 @@
 #ifndef _SDL_APPLICATION_HPP_
 #define _SDL_APPLICATION_HPP_
 
+#include "utils/fps_counter.hpp"
+#include "definitions.hpp"
+#include "sdl_error.hpp"
+#include "sdl_window.hpp"
+
 #include <SDL.h>
 #include <SDL_image.h>
 
 #include <memory>
-
-#include "fps_counter.hpp"
-
-#include "sdl_error.hpp"
-#include "sdl_window.hpp"
 
 class ApplicationListener{
 public:
@@ -22,8 +22,6 @@ public:
     virtual void caught(SDL_Event* event) = 0;
 };
 
-/*Notes: this is a one window application, since it's an desktop application 
-maybe i chould give more control over the window to the application listener...*/
 class SDLApplication{
 private:
     static SDLApplication* app;
@@ -52,21 +50,36 @@ public:
     void init(SubSystem flags = All);
     void quit();
 
-    void run(const std::string& name, int width, int height, ApplicationListener* appListener);
+    void setName(const std::string& name){
+        this->name = name;
+    }
+
+    void setWidth(int width){
+        this->width = width;
+    }
+
+    void setHeight(int height){
+        this->height = height;
+    }
+
+    void run(ApplicationListenerPtr appListener);
 
 	void setFPS(unsigned int fps) { this->fps = fps; }
 
     bool isRunning()const{return running;}
     unsigned int getFPS()const{return fps;}
     SDLWindow* getWindow()const{return window;}
-    std::string getName()const{return name;}
+    const std::string& getName()const{return name;}
     int getWidth()const{return width;}
     int getHeight()const{return height;}
 private:
     SDLApplication():
         running(false),
         fps(30),
-        window(nullptr){}
+        window(nullptr),
+        name("SDLApplication"),
+        width(512),
+        height(512){}
 
     void createWindow();
     void dispose();
@@ -74,6 +87,7 @@ private:
     bool running;
     unsigned int fps;
     SDLWindow* window;
+
     std::string name;
     int width, height;
 };

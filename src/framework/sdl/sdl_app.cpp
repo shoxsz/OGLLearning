@@ -21,16 +21,12 @@ void SDLApplication::quit(){
 	running = false;
 }
 
-void SDLApplication::run(const std::string& name, int width, int height, ApplicationListener* appListener){
+void SDLApplication::run(ApplicationListenerPtr appListener){
     SDL_Event event;
     milliseconds now, prev(0), delta(0);
     FPSCounter fpsCounter(fps);
     
 	try{
-		this->name = name;
-		this->width = width;
-		this->height = height;
-		
 		createWindow();
 		appListener->onStart();
 		running = true;
@@ -55,7 +51,7 @@ void SDLApplication::run(const std::string& name, int width, int height, Applica
 		}
 		appListener->onQuit();
 	}catch(std::exception& ex){
-		SDLMessageBox::showSimple(SDLMessageBox::Error, "Error", ex.what());
+		SDLMessageBox::create()->showSimple(SDLMessageBox::Error, nullptr, "Error", ex.what());
 	}
 
     running = false;
@@ -64,7 +60,6 @@ void SDLApplication::run(const std::string& name, int width, int height, Applica
 void SDLApplication::createWindow(){
 	window = new SDLWindow();
 
-	//default window configs
 	window->setTitle(name);
 	window->setPosition(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	window->setSize(width, height);

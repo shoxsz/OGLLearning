@@ -1,8 +1,7 @@
 #include "sdl_window.hpp"
+#include "sdl_app.hpp"
 
 #include <chrono>
-
-#include "sdl_app.hpp"
 
 SDLWindow::~SDLWindow(){
 	if(window)
