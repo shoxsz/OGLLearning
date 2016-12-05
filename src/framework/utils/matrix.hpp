@@ -83,13 +83,13 @@ public:
         Matrix<dataType, rows, _columns> result;
         unsigned int line;
 
-        if(columns != _rows && _columns != rows)
+        if(columns != _rows)
             throw std::invalid_argument("Matrices informed can't be multiplied!'");
         
         for(unsigned int i = 0; i < rows; i++){
-            line = i * rows;
-            for(unsigned int j = 0; j < columns; j++){
-                for(unsigned int k = 0; k < columns; k++){
+            line = i * columns;
+            for(unsigned int j = 0; j < _columns; j++){
+                for(unsigned int k = 0; k < _columns; k++){
                     result[i][j] += this->matrix[line + k] * matrix[k][j];
                 }
             }
