@@ -1,12 +1,26 @@
 #ifndef _POINT_HPP_
 #define _POINT_HPP_
 
-class Point{
+template<class T>
+class TPoint{
 public:
-    Point():x(0), y(0), z(0){}
-    Point(float x, float y, float z):x(x), y(y), z(z){}
+    TPoint():x(0), y(0){}
+    TPoint(T x, T y): x(x), y(y){} 
 
-    float x, y, z;
+    void set(T x, T y){
+        this->x = x;
+        this->y = y;
+    }
+
+    void setX(T x){
+        this->x = x;
+    }
+
+    void setY(T y){
+        this->y = y;
+    }
+
+    T x, y;
 };
 
 #endif

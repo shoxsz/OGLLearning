@@ -1,6 +1,11 @@
 #ifndef _WIDGET_
 #define _WIDGET_
 
+#include "definitions.hpp"
+#include "drawer.hpp"
+#include "utils/point.hpp"
+#include "utils/size.hpp"
+
 #include <map>
 #include <list>
 #include <string>
@@ -8,15 +13,67 @@
 #include <memory>
 #include <vector>
 
-#include "drawer.hpp"
-#include "rectangle.hpp"
-
-class Box;
-class Container;
+/*
+	An widget is a generic 2D UI element that have a rectangular shape and interacts with the mouse and keyboard,
+	it can be:
+		pressed, dragged, scrolled and written.
+	This class provides a functional but simple widget.
+	Each widget have a child list that it will use to propagate events.
+	Events propagation:
+		Mouse button down:
+			A widget first repass this event to its childs and return when a child has caught
+			the event, if no child has caught the event then the widget will process it:
+				A virtual method that can be overriden by a child class will be called to process the
+				event, if it returns true the widget has caught the event and so it will mark itself
+				as the mouse focus within its Box and pressed, finally it will call the user defined
+				callback to inform about the event.
+		Mouse button up:
+			A widget first repass this event to its childs and return when a child has caught
+			the event, if no child has caught the event then the widget will process it:
+				A virtual method that can be overriden by a child class will be called to process the
+				event, if it returns true the widget has caught the event and so it will unmark itself
+				as the mouse focus and unpressed, finally it will call the user defined callback to inform
+				about the event.
+		Mouse move:
+			A widget first repass this event to its childs and return when a child has caught
+			the event, if no child has caught the event then the widget will process it:
+				A virtual method that can be overriden by a child class will be called to process the
+				event, if it returns true the widget has caught the event and so it will mark itself
+				as the mouse focus within its Box and will be marked as covered, finally it will call 
+				the user defined callback to inform about the event.
+		Mouse scroll:
+			A widget first repass this event to its childs and return when a child has caught
+			the event, if no child has caught the event then the widget will process it:
+				A virtual method that can be overriden by a child class will be called to process the
+				event, if it returns true the widget has caught the event and so it will call the user
+				defined callback to inform about the event.
+		Drag events:
+			This are secondary events that are generated when the widget are marked as draggable and has
+			received some mouse event. This event is only processed by a widget if the widget is marked 
+			as the mouse focus in its Box and is marked as draggable.
+			Drag start:
+				The widget will call a virtual method that can be inherited by a child class to process the
+				event, if it returns true the widget has caught the event and so it will mark itself as dragged
+				and then call the user callback to inform about the event.
+			Drag:
+				If a widget is being dragged it will call a virtual method that can be inherited by a child class to 
+				process the event, if it returns true the widget has caught the event and so it will call the user
+				callback to inform about the event.
+			Drag end:
+				If a widget is being dragged it will call a virtual method that can be inherited by a child class to
+				process the event, if it returns true the widget has caught the event and so it will unmark itself as
+				dragged and will call a user defined callback to inform about the event.
+			Keyboard events: key down/up & text input
+				This events have no propagation, they will just be repassed to child classes to process it and call
+				user defined callbacks.
+	Drawning:
+		Each widget first draw itself and then call the childs draw methods, the widget uses a Drawer that is responsible
+		for the drawning.
+*/
 
 class Widget{
 public:
-	/*callbacks para eventos*/
+	/*events callbacks*/
 
 	typedef std::function<void(int, int, int)> OnMouseButtonDown;
 	typedef std::function<void(int, int, int)> OnMouseButtonUp;
@@ -33,14 +90,14 @@ public:
 	virtual ~Widget();
 
 	void setBox(Box* box){ this->box = box; }
-	Box* getBox(){ return box; }
+	Box* getBox(){ return (parent == nullptr ? box : parent->box); }
 
 	void draw();
 
-	/*Specify the area used by this widget, it is relative to its parent*/
-	void setShape(const Rect& rect){ this->rect = rect; }
-	Rect& getShape(){ return rect; }
-	const Rect& getShape()const{ return rect; }
+	/*Specify the area used by this widget*/
+	void setSize(const SizeI& size){ this->size = size; }
+	SizeI& getSisze(){ return size; }
+	const SizeI& getSize()const{ return size; }
 	Position& getPosition(){ return pos; }
 	const Position& getPosition()const{ return pos; }
 
@@ -57,7 +114,7 @@ public:
 	bool isEditable()const{ return editable; }
 
 	/*returns the position relative to the window*/
-	Position getRealPosition()const{
+	Position getScreenPosition()const{
 		if (parent != nullptr)
 			return pos + parent->getRealPosition();
 		return pos;
@@ -80,7 +137,7 @@ public:
 	bool textInput(const std::string& text);
 
 	/*return the container that holds this widget children*/
-	Container* getContainer()const{ return container.get(); }
+	ContainerPtr getContainer()const{ return container.get(); }
 
 	void setParent(Widget* parent){ 
 		this->parent = parent;
@@ -101,43 +158,46 @@ public:
 	void setOnTextInput(OnTextInput textInput){ this->textInputCallback = textInput; }
 
 protected:
-	/*eventos para serem tratados pelas classes filhas*/
+	/*overriden in child classes, must return true if the widget must catch the event or false
+	otherwise*/
 
-	virtual void onMouseMove(int fromX, int fromY, int toX, int toY){}
-	virtual void onMouseDown(int x, int y, int button){}
-	virtual void onMouseUp(int x, int y, int button){}
-	virtual void onMouseScroll(int scrolled){}
-	virtual void onStartDrag(int fromX, int fromY, int toX, int toY){}
-	virtual void onDrag(int fromX, int fromY, int toX, int toY){}
-	virtual void onEndDrag(int x, int y){}
-	virtual void onKeyDown(unsigned int key){}
-	virtual void onKeyUp(unsigned int key){}
-	virtual void onTextInput(const std::string& text){}
+	virtual bool onMouseMove(int fromX, int fromY, int toX, int toY){ return true; }
+	virtual bool onMouseDown(int x, int y, int button){ return true; }
+	virtual bool onMouseUp(int x, int y, int button){ return true; }
+	virtual bool onMouseScroll(int scrolled){ return true; }
+	virtual bool onStartDrag(int fromX, int fromY, int toX, int toY){ return true; }
+	virtual bool onDrag(int fromX, int fromY, int toX, int toY){ return true; }
+	virtual bool onEndDrag(int x, int y){ return true; }
+	virtual bool onKeyDown(unsigned int key){ return true; }
+	virtual bool onKeyUp(unsigned int key){ return true; }
+	virtual bool onTextInput(const std::string& text){ return true; }
 
-private:
-	void startDrag(int fromX, int fromY, int toX, int toY);
+	virtual Point calculateDrag(int fromX, int fromY, int toX, int toY){ return Point(toX - fromX, toY - fromY); }
+
+	void startDrag(int fromX, int fromY);
 	void drag(int fromX, int fromY, int toX, int toY);
 	void endDrag(int x, int y);
 protected:
 	Box* box;
 	Widget* parent;
-	std::unique_ptr<Container> container;
+	std::map<int, WidgetPtr> childs;
+
+	DrawerPtr drawer;
+	PointI position;
+	SizeI size;
 
 	bool clickable;
 	bool draggable;
 	bool editable;
-	
-	DrawerPtr drawer;
-	Rect rect;
-	Position pos;
 
-	/*flags de estado*/
+	/*state flags*/
 
 	bool pressed;	/*mouse is down or not*/
 	bool covered;	/*mouse is over or not*/
 	bool dragged;	/*is being dragged or not*/
 
 	/*callbacks*/
+
 	OnMouseButtonDown mouseDownCallback;
 	OnMouseButtonUp mouseUpCallback;
 	OnMouseMove mouseMoveCallback;
