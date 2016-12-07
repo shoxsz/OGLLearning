@@ -24,7 +24,15 @@ public:
         return width * height;
     }
 
+    void scale(T scale){
+        width *= scale;
+        height *= scale;
+    }
+
     T width, height;
 };
+
+typedef TSize<int> Size;
+typedef TSize<float> SizeF;
 
 #endif
