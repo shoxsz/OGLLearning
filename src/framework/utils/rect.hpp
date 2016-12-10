@@ -7,8 +7,8 @@ template<class T>
 class TRect{
 public:
     TRect(){}
-    TRect(const TPoint<T>& leftTop, const TSize<T>& area):TRect<T>(leftTop.x, leftTop.y, leftTop.x + area.w, leftTop.y + area.h){}
-    TRect(T left, T right, T right, T bottom): left(left), right(right), top(top), bottom(bottom){}
+    TRect(const TPoint<T>& leftTop, const TSize<T>& area):TRect<T>(leftTop.x, leftTop.x + area.width, leftTop.y, leftTop.y + area.height){}
+    TRect(T left, T right, T top, T bottom): left(left), right(right), top(top), bottom(bottom){}
 
     void set(const TPoint<T>& point){
         left = point.x;
@@ -30,53 +30,28 @@ public:
         setHeight(height);
     }
 
-    void setWidth(T width){
-        right = left + width;
-    }
-
-    void setHeight(T height){
-        bottom = top + height;
-    }
+    void setWidth(T width){right = left + width;}
+    void setHeight(T height){bottom = top + height;}
 
     void translate(T amountX, T amountY){
-        left += x;
-        top += x;
+        left += amountX;
+        top += amountY;
     }
 
-    T x()const{
-        return left;
-    }
-
-    T y()const{
-        return top;
-    }
-
-    T width()const{
-        return right - left;
-    }
-
-    T height()const{
-        return top - bottom;
-    }
-
-    T centerX()const{
-        return x + width() / 2;
-    }
-
-    T centerY()const{
-        return y + height() / 2;
-    }
-
-    T area()const{
-        return width() * height();
-    }
-
-    bool inside(const TPoint<T>& point){
-        return (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom);
-    }
+    T x()const{return left;}
+    T y()const{return top;}
+    T width()const{return right - left;}
+    T height()const{return bottom - top;}
+    T centerX()const{return x + width() / 2;}
+    T centerY()const{return y + height() / 2;}
+    T area()const{return width() * height();}
+    bool inside(const TPoint<T>& point){return (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom);}
 
     T left, top;
     T right, bottom;
 };
+
+typedef TRect<int> Rect;
+typedef TRect<float> RectF;
 
 #endif

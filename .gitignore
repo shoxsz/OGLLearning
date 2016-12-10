@@ -1,5 +1,6 @@
 *.swp
 build/*
+build_tests/*
 .vscode/*
 tests/*.exe
 tests/*.obj

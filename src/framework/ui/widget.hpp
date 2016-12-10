@@ -5,6 +5,8 @@
 #include "drawer.hpp"
 #include "utils/point.hpp"
 #include "utils/size.hpp"
+#include "utils/rect.hpp"
+#include "utils/matrix.hpp"
 #include "events.hpp"
 
 #include <map>
@@ -84,12 +86,12 @@ public:
 	typedef std::function<void(const MouseButtonEvent& button)> OnMouseButtonUp;
 	typedef std::function<void(const MouseMoveEvent& move)> OnMouseMove;
 	typedef std::function<void(const MouseScrollEvent& scroll)> OnMouseScroll;
-	typedef std::function<void(const MouseDragEvent& drag)> OnStartDrag;
-	typedef std::function<void(const MouseDragEvent& drag)> OnDrag;
-	typedef std::function<void(const MouseDragEvent& drag)> OnEndDrag;
+	typedef std::function<void(const MouseMoveEvent& drag)> OnStartDrag;
+	typedef std::function<void(const MouseMoveEvent& drag)> OnDrag;
+	typedef std::function<void(const MouseMoveEvent& drag)> OnEndDrag;
 	typedef std::function<void(const KeyboardEvent& keyboard)> OnKeyDown;
 	typedef std::function<void(const KeyboardEvent& keyboard)> OnKeyUp;
-	typedef std::function<void(const TextInputEvent& input> OnTextInput;
+	typedef std::function<void(const TextInputEvent& input)> OnTextInput;
 
 	Widget();
 	virtual ~Widget();
@@ -99,12 +101,23 @@ public:
 
 	void draw();
 
-	/*Specify the area used by this widget*/
-	void setSize(const SizeI& size){ this->size = size; }
-	SizeI& getSisze(){ return size; }
-	const SizeI& getSize()const{ return size; }
-	Position& getPosition(){ return pos; }
-	const Position& getPosition()const{ return pos; }
+	void setPosition(const Point& position) { this->position = position; }
+	Point& getPosition() { return position; }
+	const Point& getPosition()const { return position; }
+
+	void setSize(const Size& size){ this->size = size; }
+	Size& getSisze(){ return size; }
+	const Size& getSize()const{ return size; }
+
+	Rect getRect()const{return Rect(position, size);}
+
+	void setZOrder(int zOrder) {
+		this->zOrder = zOrder;
+		if (parent)
+			parent->swapZOrder(this, zOrder);
+	}
+
+	unsigned int getZOrder()const { return zOrder; }
 
 	void setDrawer(DrawerPtr drawer){ this->drawer = drawer; }
 	DrawerPtr getDrawer()const{ return drawer; }
@@ -119,10 +132,10 @@ public:
 	bool isEditable()const{ return editable; }
 
 	/*returns the position relative to the window*/
-	Position getScreenPosition()const{
+	Point getScreenPosition()const{
 		if (parent != nullptr)
-			return pos + parent->getRealPosition();
-		return pos;
+			return position + parent->getScreenPosition();
+		return position;
 	}
 
 	/*state*/
@@ -141,13 +154,8 @@ public:
 	bool keyUp(const KeyboardEvent& keyboard);
 	bool textInput(const TextInputEvent& input);
 
-	/*return the container that holds this widget children*/
-	ContainerPtr getContainer()const{ return container.get(); }
-
-	void setParent(Widget* parent){ 
-		this->parent = parent;
-		setBox(parent->box);
-	}
+	void addChild(WidgetPtr child);
+	void removeChild(WidgetPtr child);
 
 	Widget* getParent(){ return parent; }
 
@@ -162,34 +170,39 @@ public:
 	void setOnKeyUp(OnKeyUp keyUp){ this->keyUpCallback = keyUp; }
 	void setOnTextInput(OnTextInput textInput){ this->textInputCallback = textInput; }
 
+private:
+	void swapZOrder(Widget* child, int newOrder);
 protected:
 	/*overriden in child classes, must return true if the widget must catch the event or false
 	otherwise*/
 
 	virtual bool onMouseDown(const MouseButtonEvent& button){ return true; }
 	virtual bool onMouseUp(const MouseButtonEvent& button){ return true; }
-	virtual bool onMouseMove(const MouseButtonEvent& move){ return true; }
-	virtual bool onMouseScroll(const MouseMoveEvent& move){ return true; }
-	virtual bool onStartDrag(const MouseDragEvent& drag){ return true; }
-	virtual bool onDrag(const MouseDragEvent& drag){ return true; }
-	virtual bool onEndDrag(const MouseDragEvent& drag){ return true; }
+	virtual bool onMouseMove(const MouseMoveEvent& move){ return true; }
+	virtual bool onMouseScroll(const MouseScrollEvent& move){ return true; }
+	virtual bool onStartDrag(const MouseMoveEvent& drag){ return true; }
+	virtual bool onDrag(const MouseMoveEvent& drag){ return true; }
+	virtual bool onEndDrag(const MouseMoveEvent& drag){ return true; }
 	virtual bool onKeyDown(const KeyboardEvent& keyboard){ return true; }
 	virtual bool onKeyUp(const KeyboardEvent& keyboard){ return true; }
 	virtual bool onTextInput(const TextInputEvent& input){ return true; }
 
-	virtual Point calculateDrag(int fromX, int fromY, int toX, int toY){ return Point(toX - fromX, toY - fromY); }
+	/*Calculate the amount that the widget should be moved to based on the drag event*/
+	virtual Size calculateDrag(const MouseMoveEvent& drag){ return drag.getDrag(); }
 
-	void startDrag(const MouseDragEvent& drag);
-	void drag(const MouseDragEvent& drag);
-	void endDrag(const MouseDragEvent& drag);
-protected:
+	void startDrag(const MouseMoveEvent& drag);
+	void drag(const MouseMoveEvent& drag);
+	void endDrag(const MouseMoveEvent& drag);
+
 	Box* box;
 	Widget* parent;
-	std::map<int, WidgetPtr> childs;
+	std::map<int, std::list<WidgetPtr>> childs;	//childs stored in layers
 
 	DrawerPtr drawer;
-	PointI position;
-	SizeI size;
+	Point position;
+	Size size;
+
+	int zOrder;
 
 	bool clickable;
 	bool draggable;

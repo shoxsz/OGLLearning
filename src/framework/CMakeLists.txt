@@ -58,11 +58,9 @@ add_library(SDLApplication
                 ${SDL_DIR}/sdl_window.cpp
             #ui
                 ${UI_DIR}/box.hpp
-                ${UI_DIR}/container.hpp
-                ${UI_DIR}/container.cpp
+                ${UI_DIR}/definitions.hpp
                 ${UI_DIR}/drawer.hpp
-                ${UI_DIR}/position.hpp
-                ${UI_DIR}/rectangle.hpp
+                ${UI_DIR}/events.hpp
                 ${UI_DIR}/widget.hpp
                 ${UI_DIR}/widget.cpp
             #utils

@@ -5,7 +5,7 @@ template<class T>
 class TSize{
 public:
     TSize():width(0), height(0){}
-    TSize(T width, T size): width(width), height(height){}
+    TSize(T width, T height): width(width), height(height){}
 
     void resize(T width, T height){
         this->width = width;

@@ -1,8 +1,10 @@
 #ifndef _BOX_
 #define _BOX_
 
-#include <memory>
+#include "definitions.hpp"
 #include "widget.hpp"
+
+#include <memory>
 
 class Box{
 public:
@@ -14,7 +16,6 @@ public:
 
 	virtual ~Box(){}
 
-	/*process and dispatch events*/
 	virtual void poll() = 0;
 
 	void setRoot(WidgetPtr root){
@@ -23,12 +24,6 @@ public:
 	}
 
 	WidgetPtr getRoot()const{ return root; }
-
-	/*release the mouse focus and throw a mouseMove event in the specified position*/
-	void releaseMouse(int x, int y){
-		mouseFocus = nullptr;
-		root->mouseMove(x, y, x, y);
-	}
 
 	void setMouseFocus(Widget* mouseFocus){ this->mouseFocus = mouseFocus; }
 	Widget* getMouseFocus()const{ return mouseFocus; }
@@ -41,7 +36,5 @@ protected:
 	Widget* mouseFocus;
 	Widget* keyboardFocus;
 };
-
-typedef std::shared_ptr<Box> BoxPtr;
 
 #endif

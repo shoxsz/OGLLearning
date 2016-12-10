@@ -1,6 +1,7 @@
 #ifndef _POINT_HPP_
 #define _POINT_HPP_
 
+#include "size.hpp"
 #include <cmath>
 
 template<class T>
@@ -8,15 +9,14 @@ class TPoint{
 public:
     TPoint():x(0), y(0){}
     TPoint(T x, T y): x(x), y(y){} 
+	TPoint(const TSize<T>& size) { fromSize(size); }
 
     void set(T x, T y){
         this->x = x;
         this->y = y;
     }
 
-    void setX(T x){
-        this->x = x;
-    }
+    void setX(T x){this->x = x;}
 
     void setY(T y){
         this->y = y;
@@ -28,11 +28,20 @@ public:
         return sqrt(diffx*diffx, diffy*diffy);
     }
 
+	void fromSize(const TSize<T>& size) {
+		this->x = size.width;
+		this->y = size.height;
+	}
+
+    TSize<T> toSize()const{
+        return TSize<T>(x, y);
+    }
+
     TPoint<T> operator+(const TPoint<T>& point)const{
         return TPoint<T>(x + point.x, y + point.y);
     }
 
-    void operator+(const TPoint<T>& point){
+    void operator+=(const TPoint<T>& point){
         x += point.x;
         y += point.y;
     }
@@ -41,7 +50,7 @@ public:
         return TPoint<T>(x - point.x, y - point.y);
     }
 
-    void operator-(const TPoint<T>& point){
+    void operator-=(const TPoint<T>& point){
         x -= point.x;
         y -= point.y;
     }
