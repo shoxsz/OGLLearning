@@ -15,9 +15,9 @@ void SDLBox::poll(){
 	}
 	case SDL_MOUSEBUTTONDOWN: {
 		this->root->mouseDown({
-			event->button.button == 0,	//left
-			event->button.button == 1,	//right
-			event->button.button == 2,	//middle
+			event->button.button == SDL_BUTTON_LEFT,	//left
+			event->button.button == SDL_BUTTON_RIGHT,	//right
+			event->button.button == SDL_BUTTON_MIDDLE,	//middle
 			Point(event->button.x, event->button.y),
 			event->button.clicks,
 			true
@@ -62,27 +62,33 @@ void SDLBox::poll(){
 		break;
 	}
 	case SDL_KEYDOWN: {
-		this->root->keyDown({
-			(unsigned char)event->key.keysym.sym,
-			(unsigned char)event->key.keysym.mod,
-			event->key.repeat,
-			KeyboardEvent::KeyDown
-		});
+		if (keyboardFocus != nullptr) {
+			this->root->keyDown({
+				(unsigned char)event->key.keysym.sym,
+				(unsigned char)event->key.keysym.mod,
+				event->key.repeat,
+				KeyboardEvent::KeyDown
+			});
+		}
 		break;
 	}
 	case SDL_KEYUP: {
-		this->root->keyUp({
-			(unsigned char)event->key.keysym.sym,
-			(unsigned char)event->key.keysym.mod,
-			event->key.repeat,
-			KeyboardEvent::KeyUp
-		});
+		if (keyboardFocus != nullptr) {
+			keyboardFocus->keyUp({
+				(unsigned char)event->key.keysym.sym,
+				(unsigned char)event->key.keysym.mod,
+				event->key.repeat,
+				KeyboardEvent::KeyUp
+			});
+		}
 		break;
 	}
 	case SDL_TEXTINPUT: {
-		this->root->textInput({
-			event->text.text
-		});
+		if (keyboardFocus != nullptr) {
+			keyboardFocus->textInput({
+				event->text.text
+			});
+		}
 		break;
 	}
     }

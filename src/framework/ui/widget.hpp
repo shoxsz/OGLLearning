@@ -20,7 +20,7 @@
 	An widget is a generic 2D UI element that have a rectangular shape and interacts with the mouse and keyboard,
 	it can be:
 		pressed, dragged, scrolled and written.
-	This class provides a functional but simple widget.
+	This class provides a functional and simple widget.
 	Each widget have a child list that it will use to propagate events.
 	Events propagation:
 		Mouse button down:
@@ -82,22 +82,22 @@ class Widget{
 public:
 	/*events callbacks*/
 
-	typedef std::function<void(const MouseButtonEvent& button)> OnMouseButtonDown;
-	typedef std::function<void(const MouseButtonEvent& button)> OnMouseButtonUp;
-	typedef std::function<void(const MouseMoveEvent& move)> OnMouseMove;
-	typedef std::function<void(const MouseScrollEvent& scroll)> OnMouseScroll;
-	typedef std::function<void(const MouseMoveEvent& drag)> OnStartDrag;
-	typedef std::function<void(const MouseMoveEvent& drag)> OnDrag;
-	typedef std::function<void(const MouseMoveEvent& drag)> OnEndDrag;
-	typedef std::function<void(const KeyboardEvent& keyboard)> OnKeyDown;
-	typedef std::function<void(const KeyboardEvent& keyboard)> OnKeyUp;
-	typedef std::function<void(const TextInputEvent& input)> OnTextInput;
+	typedef std::function<void(Widget&, const MouseButtonEvent& button)> OnMouseButtonDown;
+	typedef std::function<void(Widget&, const MouseButtonEvent& button)> OnMouseButtonUp;
+	typedef std::function<void(Widget&, const MouseMoveEvent& move)> OnMouseMove;
+	typedef std::function<void(Widget&, const MouseScrollEvent& scroll)> OnMouseScroll;
+	typedef std::function<void(Widget&, const MouseMoveEvent& drag)> OnStartDrag;
+	typedef std::function<void(Widget&, const MouseMoveEvent& drag)> OnDrag;
+	typedef std::function<void(Widget&, const MouseMoveEvent& drag)> OnEndDrag;
+	typedef std::function<void(Widget&, const KeyboardEvent& keyboard)> OnKeyDown;
+	typedef std::function<void(Widget&, const KeyboardEvent& keyboard)> OnKeyUp;
+	typedef std::function<void(Widget&, const TextInputEvent& input)> OnTextInput;
 
 	Widget();
 	virtual ~Widget();
 
 	void setBox(Box* box){ this->box = box; }
-	Box* getBox(){ return (parent == nullptr ? box : parent->box); }
+	Box* getBox(){ return box; }
 
 	void draw();
 
@@ -187,7 +187,7 @@ protected:
 	virtual bool onKeyUp(const KeyboardEvent& keyboard){ return true; }
 	virtual bool onTextInput(const TextInputEvent& input){ return true; }
 
-	/*Calculate the amount that the widget should be moved to based on the drag event*/
+	/*Calculate the amount that the widget should be moved based on the drag event*/
 	virtual Size calculateDrag(const MouseMoveEvent& drag){ return drag.getDrag(); }
 
 	void startDrag(const MouseMoveEvent& drag);
@@ -196,10 +196,11 @@ protected:
 
 	Box* box;
 	Widget* parent;
-	std::map<int, std::list<WidgetPtr>> childs;	//childs stored in layers
+	std::map<int, std::list<WidgetPtr>> childs;	//childs stored in layers(see zOrder)
 
 	DrawerPtr drawer;
-	Point position;
+	Point position;			//Position in the screen
+	Point scrolledPosition;	//Position that determines the visible portion of the widget
 	Size size;
 
 	int zOrder;

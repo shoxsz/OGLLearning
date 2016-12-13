@@ -81,12 +81,12 @@ void createWidgets(Widget* root) {
 	WidgetPtr w1(new Widget());
 
 	w1->makeClickable(true);
-	w1->makeDraggable(false);
+	w1->makeDraggable(true);
 	w1->makeEditable(false);
 	w1->setPosition({ 10, 10 });
 	w1->setSize({ 100, 100 });
 	w1->setDrawer(root->getDrawer());
-	w1->setOnMouseMove([] (const MouseMoveEvent& move) {
+	w1->setOnMouseMove([] (Widget& widget, const MouseMoveEvent& move) {
 		std::cout << "from: (" << move.getSourcePosition().x << ", " << move.getSourcePosition().y << ") to: (" << move.getTargetPosition().x << ", " << move.getTargetPosition().y << ")" << std::endl;
 	});
 
