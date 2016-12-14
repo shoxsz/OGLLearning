@@ -2,7 +2,7 @@
 #include "../src/framework/utils/matrix.hpp"
 
 template<int c, int r>
-void printMatrix(Matrix<int, c, r>& matrix){
+void printMatrix(Matrix<c, r, int>& matrix){
     for(unsigned int i = 0; i < r; i++){
         for(unsigned int j = 0; j < c; j++){
             std::cout << matrix[i][j] << " ";
@@ -13,11 +13,11 @@ void printMatrix(Matrix<int, c, r>& matrix){
 }
 
 int main(){
-    Matrix<int, 3, 3> matrix({1, 2, 3, 4, 5, 6, 7, 8, 9});
-    Matrix<int, 3, 3> matrix2({10, 10, 10, 10, 10, 10, 10, 10, 10});
-    Matrix<int, 4, 4> matrix3;
-    Matrix<int, 4, 4> matrix4;
-    Matrix<int, 4, 4> result, result2;
+    Matrix<3, 3, int> matrix({1, 2, 3, 4, 5, 6, 7, 8, 9});
+    Matrix<3, 3, int> matrix2({10, 10, 10, 10, 10, 10, 10, 10, 10});
+    Matrix<4, 4, int> matrix3;
+    Matrix<4, 4, int> matrix4;
+    Matrix<4, 4, int> result, result2;
 
     matrix.sum(matrix2);
     printMatrix<3, 3>(matrix);
