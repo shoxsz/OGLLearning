@@ -17,8 +17,11 @@ public:
 		ShaderPtr shaderptr(new Shader());
 		std::ifstream shaderfile;
 
-		shaderptr->load(shaderfile);
-		return shaderptr;
+		try {
+			shaderptr->load(shaderfile);
+		}catch(std::exception& ex){
+			return nullptr;
+		}
 	}
 };
 

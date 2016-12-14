@@ -2,7 +2,6 @@
 #define _RESOURCE_MANAGER_HPP_
 
 #include <string>
-#include <fstream>
 
 #include <graphics\shader.hpp>
 
@@ -13,12 +12,9 @@ public:
 	static std::string getSound(const std::string& sound) { return std::string("../../resourcers/sounds") + sound; }
 	static std::string getShader(const std::string& shader) { return std::string("../../resourcers/shaders") + shader; }
 
-	static ShaderPtr loadShader(const std::string& shader) {
-		ShaderPtr shaderptr(new Shader());
-		std::ifstream shaderfile;
-
-		shaderptr->load(shaderfile);
-		return shaderptr;
+	//try to open an iostream for the resource inside the resources file
+	static bool openResource(std::iostream& stream, const std::string& resource) {
+		//stream.
 	}
 };
 

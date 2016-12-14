@@ -45,9 +45,9 @@ public:
 	void loadVector(int uniform, std::array<float, 2>& vec) { glUniform2fv(uniform, 2, vec.data()); }
 	void loadVector(int uniform, std::array<float, 3>& vec) { glUniform3fv(uniform, 3, vec.data()); }
 	void loadVector(int uniform, std::array<float, 4>& vec) { glUniform4fv(uniform, 4, vec.data()); }
-	void loadMatrix(int uniform, Matrix<float, 2, 2>& mat, bool transpose = false) { glUniformMatrix2fv(uniform, 1, transpose, mat.get()); }
-	void loadMatrix(int uniform, Matrix<float, 3, 3>& mat, bool transpose = false) { glUniformMatrix3fv(uniform, 1, transpose, mat.get()); }
-	void loadMatrix(int uniform, Matrix<float, 4, 4>& mat, bool transpose = false) { glUniformMatrix4fv(uniform, 1, transpose, mat.get()); }
+	void loadMatrix(int uniform, Mat2x2f& mat, bool transpose = false) { glUniformMatrix2fv(uniform, 1, transpose, mat.get()); }
+	void loadMatrix(int uniform, Mat3x3f& mat, bool transpose = false) { glUniformMatrix3fv(uniform, 1, transpose, mat.get()); }
+	void loadMatrix(int uniform, Mat4x4f& mat, bool transpose = false) { glUniformMatrix4fv(uniform, 1, transpose, mat.get()); }
 
 	void loadValue(int uniform, int value) { glUniform1i(uniform, value); }
 	void loadVector(int uniform, std::array<int, 2>& vec) { glUniform2iv(uniform, 2, vec.data()); }

@@ -5,9 +5,11 @@
 #include "definitions.hpp"
 #include "sdl_error.hpp"
 #include "sdl_window.hpp"
+#include "sdl_message_box.hpp"
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <gl\glew.h>
 
 #include <memory>
 
@@ -23,12 +25,9 @@ public:
 };
 
 class SDLApplication{
-private:
-    static SDLApplication* app;
 public:
     static SDLApplication* getInstance(){
-        if(app == nullptr)
-            app = new SDLApplication();
+        static SDLApplication* app = new SDLApplication();
         return app;
     }
 
@@ -68,7 +67,7 @@ public:
 
     bool isRunning()const{return running;}
     unsigned int getFPS()const{return fps;}
-    SDLWindow* getWindow()const{return window;}
+    SDLWindowPtr getWindow()const{return window;}
     const std::string& getName()const{return name;}
     int getWidth()const{return width;}
     int getHeight()const{return height;}
@@ -86,7 +85,7 @@ private:
 
     bool running;
     unsigned int fps;
-    SDLWindow* window;
+    SDLWindowPtr window;
 
     std::string name;
     int width, height;

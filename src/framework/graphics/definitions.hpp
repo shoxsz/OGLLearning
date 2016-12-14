@@ -5,9 +5,6 @@
 
 #include <memory>
 
-typedef Matrix<float, 3, 3> Matrix3;
-typedef Matrix<float, 4, 4> Matrix4;
-
 class Shader;
 class ShaderProgram;
 class SpriteBatch;

@@ -2,8 +2,6 @@
 
 #include "sdl_message_box.hpp"
 
-SDLApplication* SDLApplication::app = nullptr;
-
 void SDLApplication::init(SubSystem flags){
 	if (SDL_Init(flags) != 0)
 		throw SDLError();
@@ -13,6 +11,12 @@ void SDLApplication::init(SubSystem flags){
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+	//load opengl functions
+	glewExperimental = true;
+	if(glewInit() != GLEW_OK){
+		throw std::runtime_error("Failed to load opengl functions.");
+	}
 
 	fps = 30;
 }
@@ -58,7 +62,7 @@ void SDLApplication::run(ApplicationListenerPtr appListener){
 }
 
 void SDLApplication::createWindow(){
-	window = new SDLWindow();
+	window.reset(new SDLWindow());
 
 	window->setTitle(name);
 	window->setPosition(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
@@ -69,6 +73,5 @@ void SDLApplication::createWindow(){
 void SDLApplication::dispose(){
 	if(window && window->isAlive()){
 		window->dispose();
-		delete window;
 	}
 }

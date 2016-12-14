@@ -14,5 +14,5 @@ SUBDIRLIST(projects ${CMAKE_CURRENT_LIST_DIR})
 
 #add all the projects
 foreach(project ${projects})
-    add_subdirectory(${project})
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/${project})
 endforeach()
