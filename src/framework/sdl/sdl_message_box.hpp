@@ -3,11 +3,11 @@
 
 #include <SDL.h>
 
+#include <memory>
 #include <vector>
 #include <string>
 
 #include "sdl_window.hpp"
-#include "definitions.hpp"
 
 struct MessageBoxButton{
     int id;
@@ -31,7 +31,7 @@ public:
 		Information = SDL_MESSAGEBOX_INFORMATION
 	};
 
-	static SDLMessageBoxPtr create() { return SDLMessageBoxPtr(new SDLMessageBox()); }
+	static std::shared_ptr<SDLMessageBox> create() { return std::shared_ptr<SDLMessageBox>(new SDLMessageBox()); }
 
     SDLMessageBox(){}
 
@@ -41,6 +41,7 @@ public:
 
     SDLMessageBox& setTitle(const std::string& title);
     SDLMessageBox& setMessage(const std::string& message);
+	SDLMessageBox& addButton(const MessageBoxButton& button);
     SDLMessageBox& addButtons(const std::vector<MessageBoxButton>& buttons);
     SDLMessageBox& setDefaultReturn(const MessageBoxButton& button);
     SDLMessageBox& setDefaultEscape(const MessageBoxButton& button);
@@ -55,5 +56,7 @@ private:
     std::vector<MessageBoxButton> buttons;
     std::vector<MessageBoxColor> colors;
 };
+
+typedef std::shared_ptr<SDLMessageBox> SDLMessageBoxPtr;
 
 #endif

@@ -3,7 +3,7 @@
 #include "sdl_error.hpp"
 
 int SDLMessageBox::show(Type type){
-    show(nullptr, type);
+    return show(nullptr, type);
 }
 
 int SDLMessageBox::show(const SDLWindowPtr window, Type type){
@@ -50,30 +50,42 @@ void SDLMessageBox::showSimple(Type type, const SDLWindowPtr window, const std::
 
 SDLMessageBox& SDLMessageBox::setTitle(const std::string& title){
     this->title = title;
+	return *this;
 }
 
 SDLMessageBox& SDLMessageBox::setMessage(const std::string& message){
     this->message = message;
+	return *this;
+}
+
+SDLMessageBox& SDLMessageBox::addButton(const MessageBoxButton& button) {
+	this->buttons.push_back(button);
+	return *this;
 }
 
 SDLMessageBox& SDLMessageBox::addButtons(const std::vector<MessageBoxButton>& buttons){
     for(const MessageBoxButton& button : buttons){
         this->buttons.push_back(button);
     }
+	return *this;
 }
 
 SDLMessageBox& SDLMessageBox::setDefaultReturn(const MessageBoxButton& button){
     this->defaultReturn = button;
+	return *this;
 }
 
 SDLMessageBox& SDLMessageBox::setDefaultEscape(const MessageBoxButton& button){
     this->defaultReturn = button;
+	return *this;
 }
 
 SDLMessageBox& SDLMessageBox::setColor(unsigned int index, MessageBoxColor color){
     this->colors[index] = color;
+	return *this;
 }
 
 SDLMessageBox& SDLMessageBox::setColors(const std::vector<MessageBoxColor>& colors){
     this->colors = colors;
+	return *this;
 }

@@ -1,5 +1,5 @@
+#include "sdl_error.hpp"
 #include "sdl_window.hpp"
-#include "sdl_app.hpp"
 
 #include <chrono>
 
@@ -42,7 +42,6 @@ void SDLWindow::dispose(){
 		SDL_DestroyWindow(window);
 		SDL_GL_DeleteContext(gl);
 		alive = false;
-		//notify the appllcation?
 	}
 }
 

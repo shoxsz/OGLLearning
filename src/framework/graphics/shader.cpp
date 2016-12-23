@@ -1,5 +1,4 @@
 #include "graphics/shader.hpp"
-#include "utils/pointer_allocator.hpp"
 
 #include <vector>
 #include <fstream>
@@ -22,10 +21,10 @@ void Shader::load(const std::string& file){
 void Shader::load(std::istream& source){
     char* line;
     char vertexType[1025];
-    std::vector<char*, pointer_allocator<char*>> file_lines;
+    std::vector<char*> file_lines;
 
     if(!source.good())
-        throw std::runtime_error("Failed to load shader!");
+        throw std::runtime_error("bad std::istream passed!");
 
     //the first line must identify the shader type
     source.getline(vertexType, 1024);
@@ -50,6 +49,9 @@ void Shader::load(std::istream& source){
      shader = glCreateShader(type);
 	 glShaderSource(shader, file_lines.size(), file_lines.data(), nullptr);
      loaded = true;
+
+	 for (char* line : file_lines)
+		 delete[] line;
 }
 
 void Shader::compile(){

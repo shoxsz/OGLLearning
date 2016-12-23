@@ -2,9 +2,8 @@
 #define _WINDOW_HPP_
 
 #include <SDL.h>
-#include <SDL_opengl.h>
-
 #include <string>
+#include <memory>
 
 class SDLWindow{
 public:
@@ -68,5 +67,7 @@ private:
 	SDL_GLContext gl;
 	bool alive;
 };
+
+typedef std::shared_ptr<SDLWindow> SDLWindowPtr;
 
 #endif

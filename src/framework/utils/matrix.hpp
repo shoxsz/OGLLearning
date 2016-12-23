@@ -4,7 +4,7 @@
 #include <array>
 #include <stdexcept>
 
-template<unsigned int columns, unsigned int rows, typename dataType = float>
+template<unsigned int columns, unsigned int rows, class dataType = float>
 class Matrix{
 public:
     typedef Matrix<columns, rows, dataType> MyMatrix;
@@ -150,5 +150,10 @@ typedef Matrix<4, 4, int> Mat4x4;
 typedef Matrix<2, 2, float> Mat2x2f;
 typedef Matrix<3, 3, float> Mat3x3f;
 typedef Matrix<4, 4, float> Mat4x4f;
+
+//helper functions
+
+//...
+
 
 #endif

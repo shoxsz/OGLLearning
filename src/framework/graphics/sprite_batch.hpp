@@ -1,7 +1,6 @@
 #ifndef _SPRITE_BATCH_HPP_
 #define _SPRITE_BATCH_HPP_
 
-#include "definitions.hpp"
 #include "vertices.hpp"
 #include "texture.hpp"
 #include "shader_program.hpp"
@@ -23,7 +22,7 @@ public:
 	static const std::string modelviewName;
 	static const std::string projectionName;
 
-    SpriteBatch():drawing(false), maxVertices(1024), coords(Dynamic), texCoords(Dynamic){
+    SpriteBatch():drawing(false), maxVertices(1024), coords(Vertices<CoordAttribute2D>(Dynamic)), texCoords(Vertices<TextureAttribute2D>(Dynamic)){
 		loadDefaultProgram();
 	}
 
@@ -64,8 +63,8 @@ private:
     Vertices<TextureAttribute2D> texCoords;
 	ShaderProgram shaderProgram;
 
-	Matrix3 modelviewMatrix;
-	Matrix3 projectionMatrix;
+	Mat3x3f modelviewMatrix;
+	Mat3x3f projectionMatrix;
 
 	unsigned int modelviewLocal;
 	unsigned int projectionLocal;

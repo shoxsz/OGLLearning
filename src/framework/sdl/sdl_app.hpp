@@ -1,15 +1,16 @@
 #ifndef _SDL_APPLICATION_HPP_
 #define _SDL_APPLICATION_HPP_
 
+/*it is a good idea to include this file above all to gurantee that glew will be included before any gl.h*/
+#include <gl\glew.h>
+
 #include "utils/fps_counter.hpp"
-#include "definitions.hpp"
 #include "sdl_error.hpp"
 #include "sdl_window.hpp"
 #include "sdl_message_box.hpp"
 
 #include <SDL.h>
 #include <SDL_image.h>
-#include <gl\glew.h>
 
 #include <memory>
 
@@ -23,6 +24,8 @@ public:
     virtual void resume() = 0;	//not being used yet
     virtual void caught(SDL_Event* event) = 0;
 };
+
+typedef std::shared_ptr<ApplicationListener> ApplicationListenerPtr;
 
 class SDLApplication{
 public:

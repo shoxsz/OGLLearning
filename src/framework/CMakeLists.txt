@@ -34,7 +34,6 @@ add_library(SDLApplication
             #graphics
                 ${GRAPHICS_DIR}/buffer_object.hpp
                 ${GRAPHICS_DIR}/buffer_object.cpp
-                ${GRAPHICS_DIR}/definitions.hpp
                 ${GRAPHICS_DIR}/enums.hpp
                 ${GRAPHICS_DIR}/shader.hpp
                 ${GRAPHICS_DIR}/shader.cpp
@@ -48,7 +47,6 @@ add_library(SDLApplication
                 ${GRAPHICS_DIR}/texture_manager.cpp
                 ${GRAPHICS_DIR}/vertices.hpp
             #sdl
-                ${SDL_DIR}/definitions.hpp
                 ${SDL_DIR}/sdl_app.hpp
                 ${SDL_DIR}/sdl_app.cpp
                 ${SDL_DIR}/sdl_error.hpp
@@ -68,7 +66,6 @@ add_library(SDLApplication
                 ${UTILS_DIR}/fps_counter.hpp
                 ${UTILS_DIR}/matrix.hpp
                 ${UTILS_DIR}/point.hpp
-                ${UTILS_DIR}/pointer_allocator.hpp
                 ${UTILS_DIR}/rect.hpp
                 ${UTILS_DIR}/scene.hpp
                 ${UTILS_DIR}/size.hpp
@@ -78,7 +75,7 @@ add_library(SDLApplication
 target_link_libraries(
     SDLApplication 
 
-    glew
+    glew32
     SDL2
     SDL2main
     SDL2_Image

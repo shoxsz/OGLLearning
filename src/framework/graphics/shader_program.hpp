@@ -1,10 +1,10 @@
 #ifndef _SHADER_PROGRAM_HPP_
 #define _SHADER_PROGRAM_HPP_
 
-#include "definitions.hpp"
-#include "shader.hpp"
 #include "utils/matrix.hpp"
+#include "shader.hpp"
 
+#include <gl/glew.h>
 #include <vector>
 
 struct AttributeSpec {

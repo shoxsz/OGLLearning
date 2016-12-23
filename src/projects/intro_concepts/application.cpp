@@ -3,8 +3,8 @@
 #include <commom\resource_manager.hpp>
 
 void Application::onStart(){
-	vshader = ResourceManager::loadShader("v_intro.txt");
-	fshader = ResourceManager::loadShader("f_intro.txt");
+	vshader = ResourceManager::loadShader("simple-vs.txt");
+	fshader = ResourceManager::loadShader("simple-fs.txt");
 		
 	vshader->compile();
 	fshader->compile();
@@ -12,14 +12,18 @@ void Application::onStart(){
 	sprogram.setVertexShader(vshader);
 	sprogram.setFragmentShader(fshader);
 	sprogram.link();
+	sprogram.bind();
+
+	//objects controls
+	angle = 0.0f;
 }
 
 void Application::onQuit(){
-
+	sprogram.dispose();
 }
 
 void Application::logics(milliseconds delta){
-
+	
 }
 
 void Application::render(milliseconds delta){

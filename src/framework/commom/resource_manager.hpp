@@ -15,9 +15,7 @@ public:
 
 	static ShaderPtr loadShader(const std::string& shader) {
 		ShaderPtr shaderptr(new Shader());
-		std::ifstream shaderfile;
-
-		shaderptr->load(shaderfile);
+		shaderptr->load(getShader(shader));
 		return shaderptr;
 	}
 };

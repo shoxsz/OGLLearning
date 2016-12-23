@@ -1,7 +1,6 @@
 #ifndef _SHADER_HPP_
 #define _SHADER_HPP_
 
-#include "definitions.hpp"
 #include "enums.hpp"
 
 #include <string>
@@ -41,5 +40,7 @@ private:
     unsigned int shader;
     ShaderType type;
 };
+
+typedef std::shared_ptr<Shader> ShaderPtr;
 
 #endif

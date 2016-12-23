@@ -3,6 +3,7 @@
 
 #include <sdl\sdl_app.hpp>
 #include <graphics\shader_program.hpp>
+#include <graphics\shader.hpp>
 #include <graphics\vertices.hpp>
 
 class Application : public ApplicationListener{
@@ -16,7 +17,8 @@ public:
     virtual void caught(SDL_Event* event);
 private:
     ShaderProgram sprogram;
-    ShaderPtr vshader, fshader;
+	ShaderPtr vshader, fshader;
+	float angle;
 };
 
 #endif

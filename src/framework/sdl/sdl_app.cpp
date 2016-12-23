@@ -2,6 +2,8 @@
 
 #include "sdl_message_box.hpp"
 
+#include <iostream>
+
 void SDLApplication::init(SubSystem flags){
 	if (SDL_Init(flags) != 0)
 		throw SDLError();
@@ -11,12 +13,6 @@ void SDLApplication::init(SubSystem flags){
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-
-	//load opengl functions
-	glewExperimental = true;
-	if(glewInit() != GLEW_OK){
-		throw std::runtime_error("Failed to load opengl functions.");
-	}
 
 	fps = 30;
 }
@@ -32,6 +28,14 @@ void SDLApplication::run(ApplicationListenerPtr appListener){
     
 	try{
 		createWindow();
+
+		//load opengl functions
+		GLenum status = glewInit();
+		if (status) {
+			std::cout << glewGetErrorString(status);
+			throw std::runtime_error("Failed to load opengl functions.");
+		}
+
 		appListener->onStart();
 		running = true;
 		while (running){
