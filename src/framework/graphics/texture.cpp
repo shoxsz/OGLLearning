@@ -56,7 +56,7 @@ void Texture2D::buildMipmaps(unsigned int min, unsigned int max){
     //update filtering to mipmap filters
     setFiltering(minFilter, magFilter);
 
-    //glGenerateMipmap(GL_TEXTURE_2D);
+    glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 void Texture2D::updatePixels(void* pixels, const Size& size, PixelFormat format){
@@ -65,6 +65,6 @@ void Texture2D::updatePixels(void* pixels, const Size& size, PixelFormat format)
         created = true;
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, format, size.w, size.h, 0, format, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, size.width, size.height, 0, format, GL_UNSIGNED_BYTE, pixels);
     this->size = size;
 }

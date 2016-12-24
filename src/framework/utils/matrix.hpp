@@ -4,11 +4,11 @@
 #include <array>
 #include <stdexcept>
 
-template<typename dataType = float, unsigned int columns = 3, unsigned int rows = 3>
+template<unsigned int columns, unsigned int rows, class dataType = float>
 class Matrix{
 public:
-    typedef Matrix<dataType, columns, rows> MyMatrix;
-    typedef Matrix<dataType, rows, columns> MyTranspost;
+    typedef Matrix<columns, rows, dataType> MyMatrix;
+    typedef Matrix<rows, columns, dataType> MyTranspost;
 
     Matrix(){
         matrix.fill(0);
@@ -79,17 +79,17 @@ public:
     }
 
     template<unsigned int _columns = columns, unsigned int _rows = rows>
-    Matrix<dataType, rows, _columns> mult(Matrix<dataType, _columns, _rows>& matrix)const{
-        Matrix<dataType, rows, _columns> result;
+    Matrix<rows, _columns, dataType> mult(Matrix<_columns, _rows, dataType>& matrix)const{
+        Matrix<rows, _columns, dataType> result;
         unsigned int line;
 
-        if(columns != _rows && _columns != rows)
+        if(columns != _rows)
             throw std::invalid_argument("Matrices informed can't be multiplied!'");
         
         for(unsigned int i = 0; i < rows; i++){
-            line = i * rows;
-            for(unsigned int j = 0; j < columns; j++){
-                for(unsigned int k = 0; k < columns; k++){
+            line = i * columns;
+            for(unsigned int j = 0; j < _columns; j++){
+                for(unsigned int k = 0; k < _columns; k++){
                     result[i][j] += this->matrix[line + k] * matrix[k][j];
                 }
             }
@@ -142,5 +142,18 @@ public:
 private:
     std::array<dataType, rows * columns> matrix;
 };
+
+typedef Matrix<2, 2, int> Mat2x2;
+typedef Matrix<3, 3, int> Mat3x3;
+typedef Matrix<4, 4, int> Mat4x4;
+
+typedef Matrix<2, 2, float> Mat2x2f;
+typedef Matrix<3, 3, float> Mat3x3f;
+typedef Matrix<4, 4, float> Mat4x4f;
+
+//helper functions
+
+//...
+
 
 #endif

@@ -2,7 +2,7 @@
 
 #include "sdl_message_box.hpp"
 
-SDLApplication* SDLApplication::app = nullptr;
+#include <iostream>
 
 void SDLApplication::init(SubSystem flags){
 	if (SDL_Init(flags) != 0)
@@ -21,17 +21,21 @@ void SDLApplication::quit(){
 	running = false;
 }
 
-void SDLApplication::run(const std::string& name, int width, int height, ApplicationListener* appListener){
+void SDLApplication::run(ApplicationListenerPtr appListener){
     SDL_Event event;
     milliseconds now, prev(0), delta(0);
     FPSCounter fpsCounter(fps);
     
 	try{
-		this->name = name;
-		this->width = width;
-		this->height = height;
-		
 		createWindow();
+
+		//load opengl functions
+		GLenum status = glewInit();
+		if (status) {
+			std::cout << glewGetErrorString(status);
+			throw std::runtime_error("Failed to load opengl functions.");
+		}
+
 		appListener->onStart();
 		running = true;
 		while (running){
@@ -55,16 +59,15 @@ void SDLApplication::run(const std::string& name, int width, int height, Applica
 		}
 		appListener->onQuit();
 	}catch(std::exception& ex){
-		SDLMessageBox::showSimple(SDLMessageBox::Error, "Error", ex.what());
+		SDLMessageBox::create()->showSimple(SDLMessageBox::Error, nullptr, "Error", ex.what());
 	}
 
     running = false;
 }
 
 void SDLApplication::createWindow(){
-	window = new SDLWindow();
+	window.reset(new SDLWindow());
 
-	//default window configs
 	window->setTitle(name);
 	window->setPosition(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	window->setSize(width, height);
@@ -74,6 +77,5 @@ void SDLApplication::createWindow(){
 void SDLApplication::dispose(){
 	if(window && window->isAlive()){
 		window->dispose();
-		delete window;
 	}
 }

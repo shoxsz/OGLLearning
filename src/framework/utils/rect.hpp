@@ -1,29 +1,57 @@
 #ifndef _RECT_HPP_
 #define _RECT_HPP_
 
-class Rect{
+#include "point.hpp"
+
+template<class T>
+class TRect{
 public:
-    Rect():x(0), y(0), w(0), h(0){}
-    Rect(float x, float y, float w, float h): x(x), y(y), w(w), h(h){}
+    TRect(){}
+    TRect(const TPoint<T>& leftTop, const TSize<T>& area):TRect<T>(leftTop.x, leftTop.x + area.width, leftTop.y, leftTop.y + area.height){}
+    TRect(T left, T right, T top, T bottom): left(left), right(right), top(top), bottom(bottom){}
 
-    float left()const{
-        return (x - w / 2);
+    void set(const TPoint<T>& point){
+        left = point.x;
+        top = pont.y;
     }
 
-    float right()const{
-        return (x + w / 2);
+    void setX(T x){
+        right += x - left;
+        left = x;
     }
 
-    float top()const{
-        return (x - h / 2);
+    void setY(T y){
+        bottom += y - top;
+        top = y;
     }
 
-    float bottom()const{
-        return (x + h / 2);
+    void resize(T width, T height){
+        setWidth(width);
+        setHeight(height);
     }
 
-    float x, y;
-    float w, h;
+    void setWidth(T width){right = left + width;}
+    void setHeight(T height){bottom = top + height;}
+
+    void translate(T amountX, T amountY){
+        left += amountX;
+        top += amountY;
+    }
+
+    T x()const{return left;}
+    T y()const{return top;}
+    T width()const{return right - left;}
+    T height()const{return bottom - top;}
+    T centerX()const{return x + width() / 2;}
+    T centerY()const{return y + height() / 2;}
+    T area()const{return width() * height();}
+    bool inside(const TPoint<T>& point){return (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom);}
+
+    T left, top;
+    T right, bottom;
 };
+
+typedef TRect<int> Rect;
+typedef TRect<float> RectF;
 
 #endif

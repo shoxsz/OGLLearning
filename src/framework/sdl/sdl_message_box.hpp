@@ -3,61 +3,60 @@
 
 #include <SDL.h>
 
+#include <memory>
 #include <vector>
 #include <string>
 
 #include "sdl_window.hpp"
 
-//MAKE IT BETTER
+struct MessageBoxButton{
+    int id;
+    std::string text;
+};
+
+struct MessageBoxColor{
+    unsigned char r, g, b;
+};
 
 class SDLMessageBox{
+private:
+	enum ButtonType {
+		DefaultReturn = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT,
+		DefaultEscape = SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT
+	};
 public:
-    enum Type{
-        Error = SDL_MESSAGEBOX_ERROR,
-        Warning = SDL_MESSAGEBOX_WARNING,
-        Information = SDL_MESSAGEBOX_INFORMATION
-    };
+	enum Type {
+		Error = SDL_MESSAGEBOX_ERROR,
+		Warning = SDL_MESSAGEBOX_WARNING,
+		Information = SDL_MESSAGEBOX_INFORMATION
+	};
 
-	static void showSimple(Type type, const std::string& title, const std::string& message);
+	static std::shared_ptr<SDLMessageBox> create() { return std::shared_ptr<SDLMessageBox>(new SDLMessageBox()); }
 
-    SDLMessageBox(const SDLWindow& window):window(window.getWindow()){}
-    ~SDLMessageBox();
-
-    SDLMessageBox& button(const std::string& text, int id){
-        internalAddButton(0, text, id);
-        return *this;
-    }
-
-    SDLMessageBox& enterButton(const std::string& text, int id){
-        internalAddButton(SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, text, id);
-        return *this;
-    }
-
-    SDLMessageBox& escButton(const std::string& text, int id){
-        internalAddButton(SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, text, id);
-        return *this;
-    }
-
-    SDLMessageBox& setTitle(const std::string& title){
-        this->title = title;
-    }
-
-    SDLMessageBox& setText(const std::string& text){
-        this->text = text;
-    }
+    SDLMessageBox(){}
 
     int show(Type type);
+    int show(const SDLWindowPtr window, Type type);
+    void showSimple(Type type, const SDLWindowPtr window, const std::string& title, const std::string message);
 
-    std::string& getTitle(){return title;}
-    std::string& getText(){return text;}
+    SDLMessageBox& setTitle(const std::string& title);
+    SDLMessageBox& setMessage(const std::string& message);
+	SDLMessageBox& addButton(const MessageBoxButton& button);
+    SDLMessageBox& addButtons(const std::vector<MessageBoxButton>& buttons);
+    SDLMessageBox& setDefaultReturn(const MessageBoxButton& button);
+    SDLMessageBox& setDefaultEscape(const MessageBoxButton& button);
+    SDLMessageBox& setColor(unsigned int index, MessageBoxColor color);
+    SDLMessageBox& setColors(const std::vector<MessageBoxColor>& colors);
 
 private:
-    void internalAddButton(unsigned int flags, const std::string& text, int id);
-
-    SDL_Window* window;
     std::string title;
-    std::string text;
-    std::vector<SDL_MessageBoxButtonData> buttons;
+    std::string message;
+
+    MessageBoxButton defaultReturn, defaultEscape;
+    std::vector<MessageBoxButton> buttons;
+    std::vector<MessageBoxColor> colors;
 };
+
+typedef std::shared_ptr<SDLMessageBox> SDLMessageBoxPtr;
 
 #endif

@@ -56,11 +56,9 @@ add_library(SDLApplication
                 ${SDL_DIR}/sdl_window.cpp
             #ui
                 ${UI_DIR}/box.hpp
-                ${UI_DIR}/container.hpp
-                ${UI_DIR}/container.cpp
+                ${UI_DIR}/definitions.hpp
                 ${UI_DIR}/drawer.hpp
-                ${UI_DIR}/position.hpp
-                ${UI_DIR}/rectangle.hpp
+                ${UI_DIR}/events.hpp
                 ${UI_DIR}/widget.hpp
                 ${UI_DIR}/widget.cpp
             #utils
@@ -68,7 +66,6 @@ add_library(SDLApplication
                 ${UTILS_DIR}/fps_counter.hpp
                 ${UTILS_DIR}/matrix.hpp
                 ${UTILS_DIR}/point.hpp
-                ${UTILS_DIR}/pointer_allocator.hpp
                 ${UTILS_DIR}/rect.hpp
                 ${UTILS_DIR}/scene.hpp
                 ${UTILS_DIR}/size.hpp
@@ -78,7 +75,7 @@ add_library(SDLApplication
 target_link_libraries(
     SDLApplication 
 
-    glew
+    glew32
     SDL2
     SDL2main
     SDL2_Image

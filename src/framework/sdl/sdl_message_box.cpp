@@ -2,31 +2,90 @@
 
 #include "sdl_error.hpp"
 
-void SDLMessageBox::showSimple(Type type, const std::string& title, const std::string& message) {
-	SDL_ShowSimpleMessageBox(type, title.c_str(), message.c_str(), nullptr);
-}
-
-SDLMessageBox::~SDLMessageBox(){
-    for(auto& btt : buttons){
-        delete [] btt.text;
-    }
-}
-
 int SDLMessageBox::show(Type type){
-    int buttonId;
-    SDL_MessageBoxData data = {(Uint32)type, window, title.c_str(), text.c_str(), (int)buttons.size(), buttons.data(), nullptr};
-
-    if(SDL_ShowMessageBox(&data, &buttonId) == -1){
-        throw SDLError();
-    }
-    return buttonId;
+    return show(nullptr, type);
 }
 
-void SDLMessageBox::internalAddButton(unsigned int flags, const std::string& text, int id) {
-	char* btt_text = new char[text.size()];
+int SDLMessageBox::show(const SDLWindowPtr window, Type type){
+    int id;
+    SDL_MessageBoxData msgData;
+    std::vector<SDL_MessageBoxButtonData> buttons;
 
-	memcpy(btt_text, text.c_str(), text.size());
-	btt_text[text.size()] = 0;
+    msgData.flags = type;
+    msgData.window = window == nullptr ? nullptr : window->getWindow();
+    msgData.title = title.c_str();
+    msgData.message = message.c_str();
+    msgData.numbuttons = buttons.size();
+    
+    if(buttons.size() > 0){
+        for(MessageBoxButton& button : this->buttons){
+            buttons.push_back({0, button.id, button.text.c_str()});
+        }
 
-	buttons.push_back({ flags, id, btt_text });
+		if (!defaultReturn.text.empty())
+			buttons.push_back({ DefaultReturn, defaultReturn.id, defaultReturn.text.c_str() });
+		if (!defaultEscape.text.empty())
+			buttons.push_back({ DefaultEscape, defaultEscape.id, defaultEscape.text.c_str() });
+
+        msgData.buttons = buttons.data();
+    }else{
+        msgData.buttons = nullptr;
+    }
+
+    if(colors.size() > 0)
+        msgData.colorScheme = (SDL_MessageBoxColorScheme*)colors.data();
+    else
+        msgData.colorScheme = nullptr;
+
+    if(SDL_ShowMessageBox(&msgData, &id) < 0)
+        throw SDLError();
+
+    return id;
+}
+
+void SDLMessageBox::showSimple(Type type, const SDLWindowPtr window, const std::string& title, const std::string message){
+    if(SDL_ShowSimpleMessageBox(type, title.c_str(), message.c_str(), window == nullptr ? nullptr : window->getWindow()) < 0)
+        throw SDLError();
+}
+
+SDLMessageBox& SDLMessageBox::setTitle(const std::string& title){
+    this->title = title;
+	return *this;
+}
+
+SDLMessageBox& SDLMessageBox::setMessage(const std::string& message){
+    this->message = message;
+	return *this;
+}
+
+SDLMessageBox& SDLMessageBox::addButton(const MessageBoxButton& button) {
+	this->buttons.push_back(button);
+	return *this;
+}
+
+SDLMessageBox& SDLMessageBox::addButtons(const std::vector<MessageBoxButton>& buttons){
+    for(const MessageBoxButton& button : buttons){
+        this->buttons.push_back(button);
+    }
+	return *this;
+}
+
+SDLMessageBox& SDLMessageBox::setDefaultReturn(const MessageBoxButton& button){
+    this->defaultReturn = button;
+	return *this;
+}
+
+SDLMessageBox& SDLMessageBox::setDefaultEscape(const MessageBoxButton& button){
+    this->defaultReturn = button;
+	return *this;
+}
+
+SDLMessageBox& SDLMessageBox::setColor(unsigned int index, MessageBoxColor color){
+    this->colors[index] = color;
+	return *this;
+}
+
+SDLMessageBox& SDLMessageBox::setColors(const std::vector<MessageBoxColor>& colors){
+    this->colors = colors;
+	return *this;
 }

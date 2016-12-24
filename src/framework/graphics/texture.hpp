@@ -2,7 +2,6 @@
 #define _TEXTURE_HPP_
 
 #include <memory>
-
 #include <gl/glew.h>
 
 #include "enums.hpp"
@@ -23,7 +22,7 @@ public:
     void setWrapping(Wrapping wrap);
     void setFiltering(Filtering minFilter, Filtering magFilter);
     void write(void* pixels, const Size& size, PixelFormat format);
-    void buildMipmaps(unsigned min, unsigned int max);
+    void buildMipmaps(unsigned int min, unsigned int max);
 
     //set the image unit that the texture will be attached to before binding
     void setUnit(unsigned int unit){
@@ -50,5 +49,7 @@ private:
     unsigned int unit;
     unsigned int id;
 };
+
+typedef std::shared_ptr<Texture2D> Texture2DPtr;
 
 #endif

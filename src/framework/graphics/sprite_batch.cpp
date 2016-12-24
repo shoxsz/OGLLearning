@@ -1,5 +1,6 @@
 #include "sprite_batch.hpp"
 
+#include <graphics/shader.hpp>
 #include <sstream>
 
 void SpriteBatch::setShaders(ShaderPtr vertexShader, ShaderPtr fragmentShader) {

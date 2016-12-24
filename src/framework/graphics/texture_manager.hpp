@@ -4,17 +4,12 @@
 #include <unordered_map>
 #include <string>
 
-#include "definitions.hpp"
 #include "texture.hpp"
 
 class TextureManager{
-private:
-    static TextureManager* texManager;
 public:
-
-    static TextureManager* get(){
-        if(texManager == nullptr)
-            texManager = new TextureManager();
+    static TextureManager* instance(){
+        static TextureManager* texManager = new TextureManager();
         return texManager;
     }
 

@@ -1,12 +1,10 @@
 #ifndef _DRAWER_
 #define _DRAWER_
 
+#include "definitions.hpp"
+
 #include <memory>
 
-class Widget;
-
-/*Um Drawer é utilizado para renderizar um widget, todas as etapas de renderização são feitas
-pelo usuário da API*/
 class Drawer{
 public:
 	virtual ~Drawer(){}

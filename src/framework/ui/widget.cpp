@@ -1,12 +1,12 @@
 #include "widget.hpp"
 
 #include "box.hpp"
-#include "container.hpp"
+#include "utils/size.hpp"
 
 Widget::Widget(){
 	box = nullptr;
 	parent = nullptr;
-	container = std::unique_ptr<Container>(new Container(this));
+	zOrder = 0;
 	clickable = false;
 	draggable = false;
 	drawer = nullptr;
@@ -16,8 +16,6 @@ Widget::Widget(){
 }
 
 Widget::~Widget(){
-	if (parent != nullptr)
-		parent->container->remove(this);
 	if (box->getKeyboardFocus() == this)
 		box->setKeyboardFocus(nullptr);
 	if (box->getMouseFocus() == this)
@@ -28,159 +26,227 @@ void Widget::draw(){
 	if (drawer)
 		drawer->draw(this);
 
-	WidgetMap wmap = container->getWidgets();
-	for (const std::pair<int, std::vector<Widget*>>& layer : wmap){
-		for (Widget* w : layer.second){
-			w->draw();
+	//propagate to childs
+	for (auto& layer : childs) {
+		for (WidgetPtr& child : layer.second) {
+			child->draw();
 		}
 	}
 }
 
-bool Widget::mouseDown(int x, int y, int button){
-	Position realPos = getRealPosition();
-	/*nenhum dos filhos aceitou o evento, tenta capturar*/
-	if (clickable && covered){
-		if (rect.isInside(realPos, Position(x, y))){
-			pressed = true;
-			box->setKeyboardFocus(this);
-			onMouseDown(x, y, button);
-			if (mouseDownCallback)
-				mouseDownCallback(x, y, button);
-			return true;
+bool Widget::mouseDown(const MouseButtonEvent& button){
+	Rect rect = getRect();
+	bool inside = rect.inside(button.getPosition());
+
+	//propagate to childs
+	for(auto& layer : childs){
+		for(WidgetPtr& child : layer.second){
+			if (child->mouseDown(button))
+				return true;
 		}
+	}
+
+	if(clickable && inside && onMouseDown(button)){
+		MouseMoveEvent drag(button);
+
+		pressed = true;
+		box->setMouseFocus(this);
+
+		if(draggable && onDrag(drag)){
+			startDrag(drag);
+		}
+
+		if(mouseDownCallback)
+			mouseDownCallback(*this, button);
+		return true;
 	}
 
 	return false;
 }
 
-bool Widget::mouseUp(int x, int y, int button){
-	Position realPos = getRealPosition();
-	/*mouse up só deve ser chamado pela box caso esse widget seja o mouseFocus*/
-	if (pressed){
-		pressed = false;
-		onMouseUp(x, y, button);
-		if (mouseUpCallback)
-			mouseUpCallback(x, y, button);
-		endDrag(x, y);
+bool Widget::mouseUp(const MouseButtonEvent& button){
+	Rect rect = getRect();
+	bool inside = rect.inside(button.getPosition());
 
-		if (!rect.isInside(realPos, Position(x, y))){
+	//propagate to childs
+	for (auto& layer : childs) {
+		for (WidgetPtr& child : layer.second) {
+			if (child->mouseUp(button))
+				return true;
+		}
+	}
+
+	if (pressed && onMouseUp(button)) {
+		pressed = false;
+
+		if (editable)
+			box->setKeyboardFocus(this);
+
+		if (!inside && covered) {
 			covered = false;
-			box->releaseMouse(x, y);
+			box->setMouseFocus(nullptr);
+		}
+
+		if (dragged) {
+			MouseMoveEvent drag(button);
+			if (onEndDrag(drag))
+				endDrag(drag);
+		}
+
+		if (mouseUpCallback)
+			mouseUpCallback(*this, button);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Widget::mouseMove(const MouseMoveEvent& move){
+	Rect rect = getRect();
+	bool s_inside = rect.inside(move.getSourcePosition());
+	bool t_inside = rect.inside(move.getTargetPosition());
+
+	//if is being dragged no one else can receive the event
+	if (dragged) {
+		if (onDrag(move)) {
+			drag(move);
 		}
 		return true;
 	}
-	return false;
-}
 
-bool Widget::mouseMove(int fromX, int fromY, int toX, int toY){
-	Position realPos = getRealPosition();
+	//if is pressed no one else can receive the event
+	if (pressed) {
+		if (onMouseMove(move)) {
+			if (mouseMoveCallback)
+				mouseMoveCallback(*this, move);
+		}
+		return true;
+	}
 
-	/*se estiver pressionado, enquanto o mouse se move não permite a captura do evento a ninguém*/
-	if (!pressed){
-		WidgetMap& wmap = container->getWidgets();
-		/*verifica se algum filho capturou o evento*/
-		for (const std::pair<int, std::vector<Widget*>>& layer : wmap){
-			for (Widget* w : layer.second){
-				if (w->mouseMove(fromX, fromY, toX, toY)){
-					covered = false;
-					return true;
-				}
+	//propagate to childs
+	for (auto& layer : childs) {
+		for (WidgetPtr& child : layer.second) {
+			if (child->mouseMove(move)) {
+				covered = false;
+				return true;
 			}
 		}
 	}
-	else{
-		/*dragging*/
-		if (!dragged && draggable){
-			startDrag(fromX, fromY, toX, toY);
+
+	if((s_inside || t_inside) && onMouseMove(move)){
+		if(t_inside){
+			covered = true;
+			getBox()->setMouseFocus(this);
+		}else{
+			covered = false;
+			getBox()->setMouseFocus(nullptr);
 		}
-		else if (dragged){
-			drag(fromX, fromY, toX, toY);
-		}
-		return true;
+
+		if(mouseMoveCallback)
+			mouseMoveCallback(*this, move);
+		
+		//return false if (!t_inside) to allow other widgets to catch the event since the mouse is moving out from this widget
+		if(t_inside)
+			return true;
 	}
 
-	if (rect.isInside(realPos, Position(fromX, fromY)) || rect.isInside(realPos, Position(toX, toY))){
-		/*call user callbacks*/
-		onMouseMove(fromX, fromY, toX, toY);
-		if (mouseMoveCallback)
-			mouseMoveCallback(fromX, fromY, toX, toY);
+	return false;
+}
 
-		covered = true;
-		box->setMouseFocus(this);
-		return true;
-	}else{
-		covered = false;
-		box->setMouseFocus(nullptr);
-		return false;
+bool Widget::mouseScroll(const MouseScrollEvent& scroll){
+	//propagate to childs
+	for (auto& layer : childs) {
+		for (WidgetPtr& child : layer.second) {
+			if (child->mouseScroll(scroll))
+				return true;
+		}
 	}
+
+	if(covered && onMouseScroll(scroll)){
+		scrolledPosition += scroll.getScrolled();
+
+		if(mouseScrollCallback)
+			mouseScrollCallback(*this, scroll);
+		return true;
+	}
+	return false;
 }
 
-bool Widget::mouseWheel(int scrolled){
-	onMouseScroll(scrolled);
-	if (mouseScrollCallback)
-		mouseScrollCallback(scrolled);
-	return true;
-}
-
-bool Widget::keyDown(unsigned int key){
-	if (editable){
-		onKeyDown(key);
+bool Widget::keyDown(const KeyboardEvent& keyboard){
+	if (editable && onKeyDown(keyboard)){
 		if (keyDownCallback)
-			keyDownCallback(key);
+			keyDownCallback(*this, keyboard);
 		return true;
 	}
 	return false;
 }
 
-bool Widget::keyUp(unsigned int key){
-	if (editable){
-		onKeyUp(key);
+bool Widget::keyUp(const KeyboardEvent& keyboard){
+	if (editable && onKeyUp(keyboard)){
 		if (keyUpCallback)
-			keyUpCallback(key);
+			keyUpCallback(*this, keyboard);
 		return true;
 	}
 	return false;
 }
 
-bool Widget::textInput(const std::string& text){
-	if (editable){
-		onTextInput(text);
+bool Widget::textInput(const TextInputEvent& input){
+	if (editable && onTextInput(input)){
 		if (textInputCallback)
-			textInputCallback(text);
+			textInputCallback(*this, input);
 		return true;
 	}
 	return false;
 }
 
-void Widget::startDrag(int fromX, int fromY, int toX, int toY){
-	dragged = true;
-	drag(fromX, fromY, toX, toY);
-	onStartDrag(fromX, fromY, toX, toY);
-	if (startDragCallback)
-		startDragCallback(fromX, fromY, toX, toY);
+void Widget::addChild(WidgetPtr child) {
+	childs[child->zOrder].push_back(child);
+	child->parent = this;
+	child->setBox(this->box);
 }
 
-void Widget::drag(int fromX, int fromY, int toX, int toY){
-	pos.x += toX - fromX;
-	pos.y += toY - fromY;
-	if (parent != nullptr){
-		if (pos.x < 0)
-			pos.x = 0;
-		if (pos.x > parent->rect.w - rect.w)
-			pos.x = parent->rect.w - rect.w;
-		if (pos.y < 0)
-			pos.y = 0;
-		if (pos.y > parent->rect.h - rect.h)
-			pos.y = parent->rect.h - rect.h;
+void Widget::removeChild(WidgetPtr child) {
+	if (child->parent == this) {
+		child->parent = nullptr;
+		child->setBox(nullptr);
+		childs[child->zOrder].remove(child);
 	}
-	onDrag(fromX, fromY, toX, toY);
-	if (dragCallback)
-		dragCallback(fromX, fromY, toX, toY);
 }
 
-void Widget::endDrag(int x, int y){
+void Widget::startDrag(const MouseMoveEvent& drag){
+	dragged = true;
+	this->drag(drag);
+	if (startDragCallback)
+		startDragCallback(*this, drag);
+}
+
+void Widget::drag(const MouseMoveEvent& drag){
+	position += Point(calculateDrag(drag));
+	if (parent != nullptr){
+		if (position.x < 0)
+			position.x = 0;
+		if (position.x > parent->size.width - size.width)
+			position.x = parent->size.width - size.width;
+		if (position.y < 0)
+			position.y = 0;
+		if (position.y > parent->size.height - size.height)
+			position.y = parent->size.height - size.height;
+	}
+	if (dragCallback)
+		dragCallback(*this, drag);
+}
+
+void Widget::endDrag(const MouseMoveEvent& drag){
 	dragged = false;
-	onEndDrag(x, y);
 	if (endDragCallback)
-		endDragCallback(x, y);
+		endDragCallback(*this, drag);
+}
+
+void Widget::swapZOrder(Widget* child, int newOrder) {
+	if (child->parent == this) {
+		WidgetPtr ptr(child);
+		childs[child->zOrder].remove(ptr);
+		childs[newOrder].push_back(ptr);
+	}
 }

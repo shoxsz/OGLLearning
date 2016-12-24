@@ -1,13 +1,13 @@
 #ifndef _VERTICES_HPP_
 #define _VERTICES_HPP_
 
-#include <gl/glew.h>
-#include <vector>
-
 #include "buffer_object.hpp"
 #include "utils/point.hpp"
 #include "utils/rect.hpp"
 #include "enums.hpp"
+
+#include <gl/glew.h>
+#include <vector>
 
 struct Vertex{
 	float x, y, z;
@@ -16,7 +16,7 @@ struct Vertex{
 template<typename vertexType = Vertex, typename dataType = float>
 class Vertices{
 public:
-	Vertices(AccessType accessType):mustUpdate(false), invalidVbo(true), accessType(accessType){}
+	Vertices(AccessType accessType):mustUpdate(false), accessType(accessType){}
 
 	void addVertex(const vertexType& vertex);
 	void addIndice(unsigned int indice){
@@ -63,8 +63,8 @@ protected:
 	std::vector<unsigned int> indices;
 };
 
-template<typename vertexType = Vertex>
-void Vertices<vertexType>::addVertex(const vertexType& vertex){
+template<typename vertexType = Vertex, typename dataType = float>
+void Vertices<vertexType, dataType>::addVertex(const vertexType& vertex){
 	unsigned int oldSize = coords.size();
 	//the division is >= 1 since vertexType is(must be) composed only of dataType data
 	coords.insert(coords.end(), sizeof(vertexType) / sizeof(dataType), 0);
@@ -73,8 +73,8 @@ void Vertices<vertexType>::addVertex(const vertexType& vertex){
 	mustUpdate = true;
 }
 
-template<typename vertexType = Vertex>
-bool Vertices<vertexType>::update(bool useIndices){
+template<typename vertexType = Vertex, typename dataType = float>
+bool Vertices<vertexType, dataType>::update(bool useIndices){
 	if(mustUpdate && coords.size() > 0){
 		if(!posBuffer.isCreated())
 			posBuffer.create();
