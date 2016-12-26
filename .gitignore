@@ -1,4 +1,5 @@
 *.swp
+out/*
 build/*
 build_tests/*
 .vscode/*

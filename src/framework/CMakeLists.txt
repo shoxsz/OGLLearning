@@ -27,7 +27,7 @@ source_group("Source Files\\framework\\ui" REGULAR_EXPRESSION "${UI_DIR}${CPP_SO
 source_group("Header Files\\framework\\utils" REGULAR_EXPRESSION "${UTILS_DIR}${CPP_HEADER_FILES}")
 source_group("Source Files\\framework\\utils" REGULAR_EXPRESSION "${UTILS_DIR}${CPP_SOURCE_FILES}")
 
-add_library(SDLApplication
+add_library(SDLApplication STATIC
         #framework
             #commom
                 ${COMMOM_DIR}/resource_manager.hpp

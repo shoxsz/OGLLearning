@@ -3,6 +3,12 @@
 #include <graphics/shader.hpp>
 #include <sstream>
 
+const AttributeSpec SpriteBatch::coordAttribute = AttributeSpec("coord", 0);
+const AttributeSpec SpriteBatch::texAttribute = AttributeSpec("texCoord", 1);
+
+const std::string SpriteBatch::modelviewName = "modelview_matrix";
+const std::string SpriteBatch::projectionName = "projection_matrix";
+
 void SpriteBatch::setShaders(ShaderPtr vertexShader, ShaderPtr fragmentShader) {
 	shaderProgram.dispose();
 	shaderProgram.setVertexShader(vertexShader);
