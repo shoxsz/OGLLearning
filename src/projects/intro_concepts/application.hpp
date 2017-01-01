@@ -18,7 +18,9 @@ public:
 private:
     ShaderProgram sprogram;
 	ShaderPtr vshader, fshader;
-	float angle;
+	Vertices<Vertex, float> vertices;
+
+	unsigned int mvMatrixLocation, pMatrixLocation;
 };
 
 #endif

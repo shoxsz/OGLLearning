@@ -16,6 +16,7 @@ struct Vertex{
 template<typename vertexType = Vertex, typename dataType = float>
 class Vertices{
 public:
+	Vertices():mustUpdate(false) {}
 	Vertices(AccessType accessType):mustUpdate(false), accessType(accessType){}
 
 	void addVertex(const vertexType& vertex);
@@ -45,6 +46,10 @@ public:
 		indBuffer.dispose();
 		coords.clear();
 		indices.clear();
+	}
+
+	void setAccessType(AccessType accessType) {
+		this->accessType = accessType;
 	}
 
 	AccessType getAccessType()const{ return accessType; }
@@ -77,15 +82,17 @@ template<typename vertexType = Vertex, typename dataType = float>
 bool Vertices<vertexType, dataType>::update(bool useIndices){
 	if(mustUpdate && coords.size() > 0){
 		if(!posBuffer.isCreated())
-			posBuffer.create();
+			posBuffer.create(Array);
 
-		posBuffer.allocate((void*)coords.data(), coords.size() * sizeof(dataType), Array, accessType);
+		posBuffer.bind();
+		posBuffer.allocate((void*)coords.data(), coords.size() * sizeof(dataType), accessType);
 
 		if(useIndices && indices.size() > 0){
 			if(!indBuffer.isCreated())
-				indBuffer.create();
+				indBuffer.create(Index);
 			
-			indBuffer.allocate((void*)indices.data(), indices.size() * sizeof(unsigned int), Index, accessType);
+			indBuffer.bind();
+			indBuffer.allocate((void*)indices.data(), indices.size() * sizeof(unsigned int), accessType);
 		}
 
 		mustUpdate = false;

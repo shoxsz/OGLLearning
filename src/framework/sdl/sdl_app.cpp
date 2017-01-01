@@ -11,9 +11,6 @@ void SDLApplication::init(SubSystem flags){
 	if(IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF) == 0)
 		throw SDLError();
 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-
 	fps = 30;
 }
 
@@ -30,6 +27,7 @@ void SDLApplication::run(ApplicationListenerPtr appListener){
 		createWindow();
 
 		//load opengl functions
+		glewExperimental = true;
 		GLenum status = glewInit();
 		if (status) {
 			std::cout << glewGetErrorString(status);

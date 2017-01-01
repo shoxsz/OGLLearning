@@ -88,7 +88,7 @@ void Shader::checkErrors(GLenum param){
         std::vector<char> log;
 
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &log_size);
-        log.resize(log_size);
+        log.resize(log_size + 1);
 
         glGetShaderInfoLog(shader, log_size, nullptr, log.data());
         log[log_size] = '\0';
