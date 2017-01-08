@@ -1,8 +1,7 @@
 #ifndef _SDL_APPLICATION_HPP_
 #define _SDL_APPLICATION_HPP_
 
-/*it is a good idea to include this file above all to gurantee that glew will be included before any gl.h*/
-#include <gl\glew.h>
+#include <GL/glew.h>
 
 #include "utils/fps_counter.hpp"
 #include "sdl_error.hpp"

@@ -6,7 +6,7 @@
 #include "utils/rect.hpp"
 #include "enums.hpp"
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 #include <vector>
 
 struct Vertex{
@@ -41,7 +41,6 @@ public:
 	bool update(bool useIndices = false);
 
 	void clear(){
-		invalidVbo = true;
 		posBuffer.dispose();
 		indBuffer.dispose();
 		coords.clear();
@@ -68,7 +67,7 @@ protected:
 	std::vector<unsigned int> indices;
 };
 
-template<typename vertexType = Vertex, typename dataType = float>
+template<typename vertexType, typename dataType>
 void Vertices<vertexType, dataType>::addVertex(const vertexType& vertex){
 	unsigned int oldSize = coords.size();
 	//the division is >= 1 since vertexType is(must be) composed only of dataType data
@@ -78,7 +77,7 @@ void Vertices<vertexType, dataType>::addVertex(const vertexType& vertex){
 	mustUpdate = true;
 }
 
-template<typename vertexType = Vertex, typename dataType = float>
+template<typename vertexType, typename dataType>
 bool Vertices<vertexType, dataType>::update(bool useIndices){
 	if(mustUpdate && coords.size() > 0){
 		if(!posBuffer.isCreated())

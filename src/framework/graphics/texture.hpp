@@ -2,7 +2,7 @@
 #define _TEXTURE_HPP_
 
 #include <memory>
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 #include "enums.hpp"
 #include "utils/size.hpp"

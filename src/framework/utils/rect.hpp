@@ -12,7 +12,7 @@ public:
 
     void set(const TPoint<T>& point){
         left = point.x;
-        top = pont.y;
+        top = point.y;
     }
 
     void setX(T x){

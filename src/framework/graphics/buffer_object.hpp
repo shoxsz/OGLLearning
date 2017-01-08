@@ -1,7 +1,7 @@
 #ifndef _BUFFER_OBJECT_HPP_
 #define _BUFFER_OBJECT_HPP_
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 #include "enums.hpp"
 

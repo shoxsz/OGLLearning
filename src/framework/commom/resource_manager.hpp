@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 
-#include <graphics\shader.hpp>
+#include <graphics/shader.hpp>
 
 class ResourceManager{
 public:

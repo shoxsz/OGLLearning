@@ -1,10 +1,10 @@
 #ifndef _APPLICATION_HPP_
 #define _APPLICATION_HPP_
 
-#include <sdl\sdl_app.hpp>
-#include <graphics\shader_program.hpp>
-#include <graphics\shader.hpp>
-#include <graphics\vertices.hpp>
+#include <sdl/sdl_app.hpp>
+#include <graphics/shader_program.hpp>
+#include <graphics/shader.hpp>
+#include <graphics/vertices.hpp>
 
 class Application : public ApplicationListener{
 public:

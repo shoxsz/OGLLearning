@@ -1,6 +1,6 @@
 #include "application.hpp"
 
-#include <commom\resource_manager.hpp>
+#include <commom/resource_manager.hpp>
 
 #define MODELVIEW_MATRIX "mvMatrix"
 #define PROJECTION_MATRIX "pMatrix"

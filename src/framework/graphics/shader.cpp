@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <fstream>
+#include <cstring>
 
 void Shader::dispose(){
     if(loaded){

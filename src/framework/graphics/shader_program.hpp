@@ -4,7 +4,7 @@
 #include "utils/matrix.hpp"
 #include "shader.hpp"
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 #include <vector>
 
 struct AttributeSpec {

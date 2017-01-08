@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.5)
 project(OGLLearning)
 set(CMAKE_BUILD_TYPE release)
 
@@ -10,7 +10,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIRECTORY}/lib)
 #executables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIRECTORY}/exes)
 
-#dependencies directories(YOU(THE USER) PROBABLY NEED TO CHANGE IT!!)
+#dependencies directories
+if(WIN32)
 set(DEPS_DIRECTORY C:/Users/PauloMarcio/Documents/development/libraries)
 
 #includes
@@ -21,7 +22,17 @@ include_directories(
 #link dependencies
 link_directories(
     ${DEPS_DIRECTORY}/SDL2.0.5/lib
-    ${DEPS_DIRECTORY}/glew-2.0.0/lib/)
+    ${DEPS_DIRECTORY}/glew-2.0.0/lib)
+
+else()
+set(DEPS_DIRECTORY /usr)
+include_directories(${DEPS_DIRECTORY}/include)
+include_directories(${DEPS_DIRECTORY}/include/SDL2)
+link_directories(${DEPS_DIRECTORY}/lib)
+
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 #build the framework
 include(framework/CMakeLists.txt)

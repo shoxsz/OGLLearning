@@ -2,7 +2,7 @@
 #include "utils/color.hpp"
 #include "utils/rect.hpp"
 
-#include <GL\glew.h>
+#include <GL/glew.h>
 #include <SDL.h>
 #undef main
 #include <SDL_opengl.h>

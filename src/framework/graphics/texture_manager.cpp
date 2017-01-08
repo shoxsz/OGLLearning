@@ -1,6 +1,5 @@
 #include "texture_manager.hpp"
 
-#include <SDL_opengl.h>
 #include <SDL_image.h>
 
 void TextureManager::add(const std::string& name, Texture2DPtr texture){
@@ -8,7 +7,7 @@ void TextureManager::add(const std::string& name, Texture2DPtr texture){
 }
 
 Texture2DPtr TextureManager::load(const std::string& texture, bool mipmaps){
-	auto& tex = textures.find(texture);
+	auto tex = textures.find(texture);
 
 	if (tex == textures.end()) {
 		Texture2DPtr tex2D;
@@ -42,7 +41,7 @@ Texture2DPtr TextureManager::load(const std::string& texture, bool mipmaps){
 }
 
 Texture2DPtr TextureManager::get(const std::string& texture, bool mipmaps){
-    auto& tex = textures.find(texture);
+    auto tex = textures.find(texture);
 
 	if (tex == textures.end())
 		return load(texture);

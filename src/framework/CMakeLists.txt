@@ -72,6 +72,7 @@ add_library(SDLApplication STATIC
         )
     
 #linking
+if(WIN32)
 target_link_libraries(
     SDLApplication 
 
@@ -80,3 +81,12 @@ target_link_libraries(
     SDL2main
     SDL2_Image
     Opengl32)
+else()
+target_link_libraries(
+    SDLApplication 
+
+    SDL2
+    SDL2_image
+    GLEW
+    GL)
+endif()
