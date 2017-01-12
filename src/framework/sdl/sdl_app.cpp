@@ -57,10 +57,9 @@ void SDLApplication::run(ApplicationListenerPtr appListener){
 		}
 		appListener->onQuit();
 	}catch(std::exception& ex){
+		running = false;
 		SDLMessageBox::create()->showSimple(SDLMessageBox::Error, nullptr, "Error", ex.what());
 	}
-
-    running = false;
 }
 
 void SDLApplication::createWindow(){

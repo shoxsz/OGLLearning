@@ -14,12 +14,14 @@ void Shader::dispose(){
     }
 }
 
-void Shader::load(const std::string& file){
+void Shader::load(const std::string& file, ShaderType type){
     std::ifstream source(file);
-    load(source);
+    
+    load(source, type);
 }
 
-void Shader::load(std::istream& source){
+void Shader::load(std::istream& source, ShaderType type){
+    unsigned int line_size;
     char* line;
     char vertexType[1025];
     std::vector<char*> file_lines;
@@ -27,19 +29,14 @@ void Shader::load(std::istream& source){
     if(!source.good())
         throw std::runtime_error("bad std::istream passed!");
 
-    //the first line must identify the shader type
-    source.getline(vertexType, 1024);
-    if(!strcmp(vertexType, "vertex")){
-        type = VertexShader;
-    }else if(!strcmp(vertexType, "fragment")){
-        type = FragmentShader;
-    }else{
-        throw std::runtime_error("Shader type not specified!");
-    }
-
     while(!source.eof()){
-        line = new char[1025];
+        //no lines should be greater than 1024 bytes
+        line = new char[1026];
         source.getline(line, 1024);
+
+        line_size = strlen(line);
+        line[line_size] = '\n';
+        line[line_size + 1] = '\0';
 
         if(source.fail())
             throw std::runtime_error("Failed to read shader source!");
@@ -47,12 +44,14 @@ void Shader::load(std::istream& source){
         file_lines.push_back(line);
     }
 
-     shader = glCreateShader(type);
-	 glShaderSource(shader, file_lines.size(), file_lines.data(), nullptr);
-     loaded = true;
+    shader = glCreateShader(type);
+	glShaderSource(shader, file_lines.size(), file_lines.data(), nullptr);
+    loaded = true;
 
-	 for (char* line : file_lines)
-		 delete[] line;
+	for (char* line : file_lines)
+	    delete[] line;
+    
+    this->type = type;
 }
 
 void Shader::compile(){

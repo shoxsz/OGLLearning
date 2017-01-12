@@ -46,8 +46,8 @@ void SpriteBatch::loadDefaultProgram() {
 	ShaderPtr vshader(new Shader());
 	ShaderPtr fshader(new Shader());
 
-	vshader->load(vertexShader);
-	fshader->load(vertexShader);
+	vshader->load(vertexShader, ShaderType::VertexShader);
+	fshader->load(vertexShader, ShaderType::FragmentShader);
 
 	setShaders(vshader, fshader);
 }

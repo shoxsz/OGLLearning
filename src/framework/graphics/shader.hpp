@@ -20,8 +20,8 @@ public:
 
     void dispose();
 
-    void load(const std::string& file);
-    void load(std::istream& source);
+    void load(const std::string& file, ShaderType type);
+    void load(std::istream& source, ShaderType type);
     void compile();
     void attachToProgram(unsigned int program);
     void detach();

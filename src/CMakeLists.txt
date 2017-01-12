@@ -32,7 +32,7 @@ link_directories(${DEPS_DIRECTORY}/lib)
 
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
 
 #build the framework
 include(framework/CMakeLists.txt)
