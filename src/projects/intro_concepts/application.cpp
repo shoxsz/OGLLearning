@@ -19,14 +19,17 @@ void Application::onStart(){
 	sprogram.link({ {"coordPos", COORD_POS } });
 	sprogram.bind();
 
-	mvMatrixLocation = sprogram.getUniformLocation(MODELVIEW_MATRIX);
-	pMatrixLocation = sprogram.getUniformLocation(PROJECTION_MATRIX);
+	//mvMatrixLocation = sprogram.getUniformLocation(MODELVIEW_MATRIX);
+	//pMatrixLocation = sprogram.getUniformLocation(PROJECTION_MATRIX);
 
 	vertices.setAccessType(AccessType::Static);
 
 	vertices.addVertex({ -1.0f, -1.0f, 0.0f });
 	vertices.addVertex({ 1.0f, 1.0f, 0.0f });
 	vertices.addVertex({ 0.0f, 1.0f, 0.0f });
+
+	//update the vertices in the vbo
+	vertices.update();
 
 	glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 }
@@ -41,9 +44,6 @@ void Application::logics(milliseconds delta){
 
 void Application::render(milliseconds delta){
 	glClear(GL_COLOR_BUFFER_BIT);
-
-	//update the vertices in the vbo if needed
-	vertices.update();
 
 	//enable & load the vbo data to the vertices attributes
 	glEnableVertexAttribArray(COORD_POS);

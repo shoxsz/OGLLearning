@@ -16,7 +16,7 @@ struct Vertex{
 template<typename vertexType = Vertex, typename dataType = float>
 class Vertices{
 public:
-	Vertices():mustUpdate(false) {}
+	Vertices():mustUpdate(false){}
 	Vertices(AccessType accessType):mustUpdate(false), accessType(accessType){}
 
 	void addVertex(const vertexType& vertex);
@@ -52,7 +52,7 @@ public:
 	}
 
 	AccessType getAccessType()const{ return accessType; }
-	unsigned int countVertices()const{ return coords.size() / sizeof(vertexType); }
+	unsigned int countVertices()const{ return coords.size() / (sizeof(vertexType) / sizeof(dataType)); }
 	const std::vector<unsigned int>& getIndices()const{ return indices; }
 	const std::vector<float>& getCoords()const{ return coords; }
 
