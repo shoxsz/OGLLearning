@@ -16,7 +16,7 @@ void Texture2D::dispose(){
 }
 
 void Texture2D::bind(){
-    glActiveTexture(unit);
+    glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, id);
 }
 
@@ -42,12 +42,20 @@ void Texture2D::setFiltering(Filtering minFilter, Filtering magFilter){
     }
 }
 
-void Texture2D::write(void* pixels, const Size& size, PixelFormat format){
-    //just a wrapper? for now yes
-    updatePixels(pixels, size, format);
+
+void Texture2D::updatePixels(void* pixels, const Size& size, PixelFormat format){
+    if(!created){
+        glGenTextures(1, &id);
+        created = true;
+    }
+
+    bind();
+    glTexImage2D(GL_TEXTURE_2D, 0, format, size.width, size.height, 0, format, GL_UNSIGNED_BYTE, pixels);
+    this->size = size;
 }
 
 void Texture2D::buildMipmaps(unsigned int min, unsigned int max){
+    bind();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, min);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, max);
 
@@ -57,14 +65,4 @@ void Texture2D::buildMipmaps(unsigned int min, unsigned int max){
     setFiltering(minFilter, magFilter);
 
     glGenerateMipmap(GL_TEXTURE_2D);
-}
-
-void Texture2D::updatePixels(void* pixels, const Size& size, PixelFormat format){
-    if(!created){
-        glGenTextures(1, &id);
-        created = true;
-    }
-
-    glTexImage2D(GL_TEXTURE_2D, 0, format, size.width, size.height, 0, format, GL_UNSIGNED_BYTE, pixels);
-    this->size = size;
 }

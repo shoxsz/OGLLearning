@@ -1,11 +1,14 @@
 #include "application.hpp"
 
+#include <iostream>
 #include <commom/resource_manager.hpp>
 
-#define MODELVIEW_MATRIX "mvMatrix"
-#define PROJECTION_MATRIX "pMatrix"
+#define MODELVIEW_MATRIX ("mvMatrix")
+#define PROJECTION_MATRIX ("pMatrix")
+#define SAMPLER ("tex")
 
-#define COORD_POS (0)
+#define COORDS (0)
+#define TEX_COORDS (1)
 
 void Application::onStart(){
 	vshader = ResourceManager::loadShader("simple-vs.txt", ShaderType::VertexShader);
@@ -16,20 +19,35 @@ void Application::onStart(){
 
 	sprogram.setVertexShader(vshader);
 	sprogram.setFragmentShader(fshader);
-	sprogram.link({ {"coordPos", COORD_POS } });
+	sprogram.link({ {"coord", COORDS }, {"texCoord", TEX_COORDS}});
 	sprogram.bind();
 
-	//mvMatrixLocation = sprogram.getUniformLocation(MODELVIEW_MATRIX);
-	//pMatrixLocation = sprogram.getUniformLocation(PROJECTION_MATRIX);
+	samplerLocation = sprogram.getUniformLocation(SAMPLER);
+	sprogram.loadValue(samplerLocation, 0);
 
-	vertices.setAccessType(AccessType::Static);
+	coords.addVertices({
+		{-0.5f, -0.5f, 0.0f},
+		{0.5f, -0.5f, 0.0f},
+		{0.5f, 0.5f, 0.0f},
+		{0.5f, 0.5f, 0.0f},
+		{-0.5f, 0.5f, 0.0f},
+		{-0.5f, -0.5f, 0.0f}
+	});
+	coords.update();
 
-	vertices.addVertex({ -1.0f, -1.0f, 0.0f });
-	vertices.addVertex({ 1.0f, 1.0f, 0.0f });
-	vertices.addVertex({ 0.0f, 1.0f, 0.0f });
+	texCoords.addVertices({
+			{0.0f, 0.0f}, 
+			{1.0f, 0.0f}, 
+			{1.0f, 1.0f}, 
+			{1.0f, 1.0f}, 
+			{0.0f, 1.0f},
+			{0.0f, 0.0f}
+	});
+	texCoords.update();
 
-	//update the vertices in the vbo
-	vertices.update();
+	texture = ResourceManager::loadTexture("crate.jpg", false);
+	texture->setFiltering(Nearest, Nearest);
+	texture->bind();
 
 	glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 }
@@ -45,12 +63,16 @@ void Application::logics(milliseconds delta){
 void Application::render(milliseconds delta){
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	//enable & load the vbo data to the vertices attributes
-	glEnableVertexAttribArray(COORD_POS);
-	glVertexAttribPointer(COORD_POS, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glEnableVertexAttribArray(COORDS);
+	coords.feed(COORDS);
+
+	glEnableVertexAttribArray(TEX_COORDS);
+	texCoords.feed(TEX_COORDS);
 
 	//draw the vertices
-	glDrawArrays(GL_TRIANGLES, 0, vertices.countVertices());
+	std::cout << "aqui" << std::endl;
+	glDrawArrays(GL_TRIANGLES, 0, coords.countVertices());
+	std::cout << "aqui" << std::endl;
 }
 
 void Application::caught(SDL_Event* event){

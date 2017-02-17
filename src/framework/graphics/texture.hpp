@@ -21,7 +21,7 @@ public:
 
     void setWrapping(Wrapping wrap);
     void setFiltering(Filtering minFilter, Filtering magFilter);
-    void write(void* pixels, const Size& size, PixelFormat format);
+    void updatePixels(void* pixels, const Size& size, PixelFormat format);
     void buildMipmaps(unsigned int min, unsigned int max);
 
     //set the image unit that the texture will be attached to before binding
@@ -38,7 +38,6 @@ public:
     }
 
 private:
-    void updatePixels(void* pixels, const Size& size, PixelFormat format);
 
     Size size;
     bool hasMipmap;

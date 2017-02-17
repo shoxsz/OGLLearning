@@ -2,6 +2,7 @@
 #define _APPLICATION_HPP_
 
 #include <sdl/sdl_app.hpp>
+#include <graphics/texture_manager.hpp>
 #include <graphics/shader_program.hpp>
 #include <graphics/shader.hpp>
 #include <graphics/vertices.hpp>
@@ -12,14 +13,18 @@ public:
     virtual void onQuit();
     virtual void logics(milliseconds delta);
     virtual void render(milliseconds delta);
-    virtual void pause(){}	//not being used yet
-    virtual void resume(){}	//not being used yet
+    virtual void pause(){}
+    virtual void resume(){}
     virtual void caught(SDL_Event* event);
 private:
     ShaderProgram sprogram;
 	ShaderPtr vshader, fshader;
-	Vertices<Vertex, float> vertices;
 
+    Texture2DPtr texture;
+	Vertices<Vertex, float> coords;
+	Vertices<TexturedVertex, float> texCoords;
+
+    unsigned int samplerLocation;
 	unsigned int mvMatrixLocation, pMatrixLocation;
 };
 

@@ -35,13 +35,15 @@ void Shader::load(std::istream& source, ShaderType type){
         source.getline(line, 1024);
 
         line_size = strlen(line);
-        line[line_size] = '\n';
-        line[line_size + 1] = '\0';
+        if(line_size > 0){
+            line[line_size] = '\n';
+            line[line_size + 1] = '\0';
 
-        if(source.fail())
-            throw std::runtime_error("Failed to read shader source!");
+            if(source.fail() && !source.eof())
+                throw std::runtime_error("Failed to read shader source!");
 
-        file_lines.push_back(line);
+            file_lines.push_back(line);
+        }
     }
 
     shader = glCreateShader(type);

@@ -6,10 +6,12 @@
 #include "shader_program.hpp"
 
 struct CoordAttribute2D{
+    enum{CoordCount = 2, GLType = GL_FLOAT};
     float x, y;
 };
 
 struct TextureAttribute2D{
+    enum{CoordCount = 2, GLType = GL_FLOAT};
     float u, v;
 };
 

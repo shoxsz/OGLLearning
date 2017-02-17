@@ -17,7 +17,6 @@ public:
     void add(const std::string& name, Texture2DPtr texture);
     //load the texture: add it to the managed textures and return it
     Texture2DPtr load(const std::string& texture, bool mipmaps = true);
-    Texture2DPtr get(const std::string& texture, bool mipmaps = true);
     bool remove(const std::string& texture);
 
 private:

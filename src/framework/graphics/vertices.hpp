@@ -10,16 +10,31 @@
 #include <vector>
 
 struct Vertex{
+	enum{CoordCount = 3, GLType = GL_FLOAT};
 	float x, y, z;
+};
+
+struct TexturedVertex{
+	enum{CoordCount = 2, GLType = GL_FLOAT};
+    float u, v;
+};
+
+struct ColoredVertex{
+	enum{CoordCount = 4, GLType = GL_FLOAT};
+    float r, g, b, a;
 };
 
 template<typename vertexType = Vertex, typename dataType = float>
 class Vertices{
 public:
-	Vertices():mustUpdate(false){}
+	Vertices():mustUpdate(false), accessType(AccessType::Static){}
 	Vertices(AccessType accessType):mustUpdate(false), accessType(accessType){}
 
 	void addVertex(const vertexType& vertex);
+	void addVertices(const std::initializer_list<vertexType>& vertices){
+		for(const vertexType& vertex : vertices)
+			addVertex(vertex);
+	}
 	void addIndice(unsigned int indice){
 		indices.push_back(indice);
 	}
@@ -40,8 +55,11 @@ public:
 	return true if update was needed*/
 	bool update(bool useIndices = false);
 
+	/*feed the vertex attrib with the buffer current data*/
+	void feed(unsigned int vertexAttrib);
+
 	void clear(){
-		posBuffer.dispose();
+		vertexBuffer.dispose();
 		indBuffer.dispose();
 		coords.clear();
 		indices.clear();
@@ -52,7 +70,7 @@ public:
 	}
 
 	AccessType getAccessType()const{ return accessType; }
-	unsigned int countVertices()const{ return coords.size() / (sizeof(vertexType) / sizeof(dataType)); }
+	unsigned int countVertices()const{ return (coords.size() / vertexType::CoordCount); }
 	const std::vector<unsigned int>& getIndices()const{ return indices; }
 	const std::vector<float>& getCoords()const{ return coords; }
 
@@ -61,7 +79,7 @@ protected:
 
 	bool mustUpdate;
 
-	BufferObject posBuffer;
+	BufferObject vertexBuffer;
 	BufferObject indBuffer;
 	std::vector<dataType> coords;
 	std::vector<unsigned int> indices;
@@ -70,8 +88,7 @@ protected:
 template<typename vertexType, typename dataType>
 void Vertices<vertexType, dataType>::addVertex(const vertexType& vertex){
 	unsigned int oldSize = coords.size();
-	//the division is >= 1 since vertexType is(must be) composed only of dataType data
-	coords.insert(coords.end(), sizeof(vertexType) / sizeof(dataType), 0);
+	coords.insert(coords.end(), vertexType::CoordCount, 0);
 	//raw copy of the data
 	memcpy(coords.data() + oldSize, &vertex, sizeof(vertexType));
 	mustUpdate = true;
@@ -80,11 +97,11 @@ void Vertices<vertexType, dataType>::addVertex(const vertexType& vertex){
 template<typename vertexType, typename dataType>
 bool Vertices<vertexType, dataType>::update(bool useIndices){
 	if(mustUpdate && coords.size() > 0){
-		if(!posBuffer.isCreated())
-			posBuffer.create(Array);
+		if(!vertexBuffer.isCreated())
+			vertexBuffer.create(Array);
 
-		posBuffer.bind();
-		posBuffer.allocate((void*)coords.data(), coords.size() * sizeof(dataType), accessType);
+		vertexBuffer.bind();
+		vertexBuffer.allocate((void*)coords.data(), coords.size() * sizeof(dataType), accessType);
 
 		if(useIndices && indices.size() > 0){
 			if(!indBuffer.isCreated())
@@ -99,6 +116,12 @@ bool Vertices<vertexType, dataType>::update(bool useIndices){
 		return true;
 	}
 	return false;
+}
+
+template<typename vertexType, typename dataType>
+void Vertices<vertexType, dataType>::feed(unsigned int vertexAttrib){
+	vertexBuffer.bind();
+	glVertexAttribPointer(vertexAttrib, vertexType::CoordCount, vertexType::GLType, GL_FALSE, 0, nullptr);
 }
 
 #endif

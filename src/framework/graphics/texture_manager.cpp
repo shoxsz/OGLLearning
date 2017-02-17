@@ -29,7 +29,7 @@ Texture2DPtr TextureManager::load(const std::string& texture, bool mipmaps){
 		}
 
 		tex2D.reset(new Texture2D());
-		tex2D->write(image->pixels, Size(image->w, image->h), format);
+		tex2D->updatePixels(image->pixels, Size(image->w, image->h), format);
 
 		textures[texture] = tex2D;
 
@@ -38,15 +38,6 @@ Texture2DPtr TextureManager::load(const std::string& texture, bool mipmaps){
 	else {
 		return tex->second;
 	}
-}
-
-Texture2DPtr TextureManager::get(const std::string& texture, bool mipmaps){
-    auto tex = textures.find(texture);
-
-	if (tex == textures.end())
-		return load(texture);
-    
-    return tex->second;
 }
 
 bool TextureManager::remove(const std::string& texture){
