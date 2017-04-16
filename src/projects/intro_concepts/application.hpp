@@ -16,9 +16,12 @@ public:
     virtual void resume(){}	//not being used yet
     virtual void caught(SDL_Event* event);
 private:
-    ShaderProgram sprogram;
 	ShaderPtr vshader, fshader;
-	float angle;
+    ShaderProgram sprogram;
+	//ShaderPtr vshader, fshader;
+	GLuint vao;
+	Vertices<Vertex, float> vertices;
+	Vertices<ColoredVertex, float> colors;
 };
 
 #endif

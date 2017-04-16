@@ -151,9 +151,9 @@ typedef Matrix<2, 2, float> Mat2x2f;
 typedef Matrix<3, 3, float> Mat3x3f;
 typedef Matrix<4, 4, float> Mat4x4f;
 
-//helper functions
-
-//...
-
-
+Mat4x4f perspective(float l, float r, float b, float t, float n, float f);
+Mat4x4f ortographic(float l, float r, float b, float t, float n, float f);
+Mat4x4f translate(float x, float y, float z);
+Mat4x4f rotate(float angle, float x, float y, float z);
+Mat4x4f scale(float scale);
 #endif

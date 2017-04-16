@@ -9,7 +9,7 @@
 
 class Texture2D{
 public:
-    friend class TextureManager;
+	friend class TextureManager;
 
     Texture2D():hasMipmap(false), created(false), unit(0), id(0){}
     Texture2D(const Size& size, PixelFormat format);

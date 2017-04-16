@@ -4,3 +4,7 @@ build_tests/*
 .vscode/*
 tests/*.exe
 tests/*.obj
+Win32/*
+x64/*
+out/*
+SDLApplication.dir/*

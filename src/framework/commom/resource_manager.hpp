@@ -4,18 +4,19 @@
 #include <string>
 #include <fstream>
 
+#include <sdl\sdl_app.hpp>
 #include <graphics\shader.hpp>
 
 class ResourceManager{
 public:
-	static std::string getImage(const std::string& image) { return std::string("../../resourcers/images") + image; }
-	static std::string getFont(const std::string& font) { return std::string("../../resourcers/fonts") + font; }
-	static std::string getSound(const std::string& sound) { return std::string("../../resourcers/sounds") + sound; }
-	static std::string getShader(const std::string& shader) { return std::string("../../resourcers/shaders") + shader; }
+	static std::string getImage(const std::string& image) { return SDLApplication::getInstance()->getAppDir() + std::string("resources\\images\\") + image; }
+	static std::string getFont(const std::string& font) { return SDLApplication::getInstance()->getAppDir() + std::string("resources\\fonts\\") + font; }
+	static std::string getSound(const std::string& sound) { return SDLApplication::getInstance()->getAppDir() + std::string("resources\\sounds\\") + sound; }
+	static std::string getShader(const std::string& shader) { return SDLApplication::getInstance()->getAppDir() + std::string("resources\\shaders\\") + shader; }
 
-	static ShaderPtr loadShader(const std::string& shader) {
+	static ShaderPtr loadShader(const std::string& shader, ShaderType shadertType) {
 		ShaderPtr shaderptr(new Shader());
-		shaderptr->load(getShader(shader));
+		shaderptr->load(getShader(shader), shadertType);
 		return shaderptr;
 	}
 };

@@ -39,9 +39,8 @@ public:
 	void link(const std::initializer_list<AttributeSpec>& attributes = {});
     void bind();
 
-	unsigned int getUniformLocation(const std::string& name) { return glGetUniformLocation(program, name.c_str()); }
+	GLint getUniformLocation(const std::string& name) { return glGetUniformLocation(program, name.c_str()); }
 
-	void loadValue(int uniform, float value) { glUniform1f(uniform, value); }
 	void loadVector(int uniform, std::array<float, 2>& vec) { glUniform2fv(uniform, 2, vec.data()); }
 	void loadVector(int uniform, std::array<float, 3>& vec) { glUniform3fv(uniform, 3, vec.data()); }
 	void loadVector(int uniform, std::array<float, 4>& vec) { glUniform4fv(uniform, 4, vec.data()); }
@@ -50,6 +49,7 @@ public:
 	void loadMatrix(int uniform, Mat4x4f& mat, bool transpose = false) { glUniformMatrix4fv(uniform, 1, transpose, mat.get()); }
 
 	void loadValue(int uniform, int value) { glUniform1i(uniform, value); }
+	void loadValue(int uniform, float value) { glUniform1f(uniform, value); }
 	void loadVector(int uniform, std::array<int, 2>& vec) { glUniform2iv(uniform, 2, vec.data()); }
 	void loadVector(int uniform, std::array<int, 3>& vec) { glUniform3iv(uniform, 3, vec.data()); }
 	void loadVector(int uniform, std::array<int, 4>& vec) { glUniform4iv(uniform, 4, vec.data()); }

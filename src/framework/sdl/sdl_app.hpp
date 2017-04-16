@@ -49,7 +49,7 @@ public:
     SDLApplication& operator=(const SDLApplication& app) = delete;
     ~SDLApplication(){dispose();}
 
-    void init(SubSystem flags = All);
+    void init(unsigned int argc = 0, const char* argv[] = nullptr, SubSystem flags = All);
     void quit();
 
     void setName(const std::string& name){
@@ -68,12 +68,14 @@ public:
 
 	void setFPS(unsigned int fps) { this->fps = fps; }
 
-    bool isRunning()const{return running;}
-    unsigned int getFPS()const{return fps;}
-    SDLWindowPtr getWindow()const{return window;}
-    const std::string& getName()const{return name;}
-    int getWidth()const{return width;}
-    int getHeight()const{return height;}
+	bool isRunning()const { return running; }
+	unsigned int getFPS()const { return fps; }
+	SDLWindowPtr getWindow()const { return window; }
+	const std::string& getName()const { return name; }
+	int getWidth()const { return width; }
+	int getHeight()const { return height;; }
+	const std::string& getAppDir()const { return app_dir; }
+	const std::vector<std::string>& getArgs()const { return argv; }
 private:
     SDLApplication():
         running(false),
@@ -92,6 +94,9 @@ private:
 
     std::string name;
     int width, height;
+
+	std::string app_dir;
+	std::vector<std::string> argv;
 };
 
 typedef std::shared_ptr<SDLApplication> SDLApplicationPtr;

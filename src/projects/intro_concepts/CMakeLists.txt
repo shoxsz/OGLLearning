@@ -9,9 +9,14 @@ add_executable(
     main.cpp
     application.hpp
     application.cpp
-    )
+)
 
 target_link_libraries(
     intro_concepts
+    glew32
+    SDL2
+    SDL2main
+    SDL2_Image
+    Opengl32
     SDLApplication
 )

@@ -2,7 +2,6 @@
 #define _SDL_ERROR_HPP_
 
 #include <SDL.h>
-
 #include <stdexcept>
 
 class SDLError : public std::runtime_error{

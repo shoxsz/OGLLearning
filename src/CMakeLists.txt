@@ -3,12 +3,13 @@ project(OGLLearning)
 set(CMAKE_BUILD_TYPE release)
 
 #this is the default output directory to use in all cmake lists
-set(OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../out)
+set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/../out)
 
 #libraries
-set(LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIRECTORY}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}/lib)
 #executables
-set(EXECUTABLES_OUTPUT_DIRECTORY ${OUTPUT_DIRECTORY}/exes)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}/exes)
 
 #dependencies directories(YOU(THE USER) PROBABLY NEED TO CHANGE IT!!)
 set(DEPS_DIRECTORY C:/Users/PauloMarcio/Documents/development/libraries)

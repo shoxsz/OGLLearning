@@ -4,17 +4,26 @@
 
 #include <iostream>
 
-void SDLApplication::init(SubSystem flags){
+void SDLApplication::init(unsigned int argc, const char* argv[], SubSystem flags){
 	if (SDL_Init(flags) != 0)
 		throw SDLError();
 
 	if(IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF) == 0)
 		throw SDLError();
 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
 	fps = 30;
+	
+	if (argc > 0) {
+		this->argv.resize(argc);
+		for (unsigned int i = 0; i < argc; i++) {
+			this->argv[i] = argv[i];
+		}
+	}
+
+	app_dir = this->argv[0].substr(0, this->argv[0].find_last_of('\\')) + "\\";
 }
 
 void SDLApplication::quit(){

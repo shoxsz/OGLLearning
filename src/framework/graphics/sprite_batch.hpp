@@ -5,16 +5,18 @@
 #include "texture.hpp"
 #include "shader_program.hpp"
 
-struct CoordAttribute2D{
-    float x, y;
+struct CoordAttribute2D {
+	enum { CoordCount = 2, GLType = GL_FLOAT };
+	float x, y;
 };
 
-struct TextureAttribute2D{
-    float u, v;
+struct TextureAttribute2D {
+	enum { CoordCount = 2, GLType = GL_FLOAT };
+	float u, v;
 };
 
 /*2D sprite batch*/
-class SpriteBatch{
+class SpriteBatch {
 public:
 	static const AttributeSpec coordAttribute;
 	static const AttributeSpec texAttribute;
@@ -22,7 +24,7 @@ public:
 	static const std::string modelviewName;
 	static const std::string projectionName;
 
-    SpriteBatch():drawing(false), maxVertices(1024), coords(Vertices<CoordAttribute2D>(Dynamic)), texCoords(Vertices<TextureAttribute2D>(Dynamic)){
+	SpriteBatch() :drawing(false), maxVertices(1024), coords(Vertices<CoordAttribute2D>(Dynamic)), texCoords(Vertices<TextureAttribute2D>(Dynamic)) {
 		loadDefaultProgram();
 	}
 
@@ -35,32 +37,32 @@ public:
 	recreated, the shaders must name its attributes and uniforms as specified by this batcher */
 	void setShaders(ShaderPtr vertexShader, ShaderPtr fragmentShader);
 
-    //max vertices to use in the vbo's, when the limit is reached the vertex will be sent to the gpu
-    void setMaxVertices(unsigned int vertices){
-        this->maxVertices = vertices;
-    }
+	//max vertices to use in the vbo's, when the limit is reached the vertex will be sent to the gpu
+	void setMaxVertices(unsigned int vertices) {
+		this->maxVertices = vertices;
+	}
 
-    //begin the drawing process for the specified texture
-    void begin(Texture2DPtr texture);
-    void end();
+	//begin the drawing process for the specified texture
+	void begin(Texture2DPtr texture);
+	void end();
 
-    //draw the current texture inside the rect
-    void draw(Rect& rect);
+	//draw the current texture inside the rect
+	void draw(Rect& rect);
 
-    //draw the specified src from the texture inside the dst
-    void drawRect(Rect& src, Rect& dst);
+	//draw the specified src from the texture inside the dst
+	void drawRect(Rect& src, Rect& dst);
 
-    unsigned int getMaxVertices()const{ return coords.countVertices(); }
+	unsigned int getMaxVertices()const { return coords.countVertices(); }
 
 private:
 	void loadDefaultProgram();
 
-    bool drawing;
-    unsigned int maxVertices;
+	bool drawing;
+	unsigned int maxVertices;
 
-    Texture2DPtr currentTexture;
-    Vertices<CoordAttribute2D> coords;
-    Vertices<TextureAttribute2D> texCoords;
+	Texture2DPtr currentTexture;
+	Vertices<CoordAttribute2D> coords;
+	Vertices<TextureAttribute2D> texCoords;
 	ShaderProgram shaderProgram;
 
 	Mat3x3f modelviewMatrix;

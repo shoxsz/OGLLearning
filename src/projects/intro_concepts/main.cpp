@@ -1,11 +1,14 @@
 #include "application.hpp"
 
+#include <fstream>
+#include <iostream>
+
 int main(int argc, char* argv[]){
     SDLApplication* app = SDLApplication::getInstance();
     ApplicationListenerPtr appListener(new Application);
 
     try{
-        app->init(SDLApplication::Video);
+        app->init(argc, (const char**)argv, SDLApplication::Video);
         app->setName("First concepts");
         app->setWidth(640);
         app->setHeight(640);

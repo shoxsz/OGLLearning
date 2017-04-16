@@ -45,14 +45,14 @@ void ShaderProgram::checkProgramError(){
     glGetProgramiv(program, GL_LINK_STATUS, &status);
 
     if(status == GL_FALSE){
-        int log_size;
+        GLsizei max_size;
         std::vector<char> log;
 
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_size);
-        log.resize(log_size);
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &max_size);
+        log.resize(max_size+1);
 
-        glGetProgramInfoLog(program, log_size, nullptr, log.data());
-        log[log_size] = '\0';
+        glGetProgramInfoLog(program, max_size, nullptr, log.data());
+        log[max_size] = '\0';
 
         throw std::runtime_error(log.data());
     }
