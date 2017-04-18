@@ -4,11 +4,11 @@
 #include <array>
 #include <stdexcept>
 
-template<unsigned int columns, unsigned int rows, class dataType = float>
+template<unsigned int rows, unsigned int columns, class dataType = float>
 class Matrix{
 public:
-    typedef Matrix<columns, rows, dataType> MyMatrix;
-    typedef Matrix<rows, columns, dataType> MyTranspost;
+    typedef Matrix<rows, columns, dataType> MyMatrix;
+    typedef Matrix<columns, rows, dataType> MyTranspost;
 
     Matrix(){
         matrix.fill(0);
@@ -98,7 +98,7 @@ public:
         return result;
     }
 
-    MyMatrix& operator*(const dataType& scalar)const{
+    MyMatrix operator*(const dataType& scalar)const{
         MyMatrix result(*this);
 
         result.scale(scalar);
@@ -156,4 +156,5 @@ Mat4x4f ortographic(float l, float r, float b, float t, float n, float f);
 Mat4x4f translate(float x, float y, float z);
 Mat4x4f rotate(float angle, float x, float y, float z);
 Mat4x4f scale(float scale);
+
 #endif

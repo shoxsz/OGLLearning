@@ -10,8 +10,8 @@ void Application::onStart(){
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	//glEnable(GL_DEPTH_TEST);
-	//glDepthFunc(GL_LESS);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
 	vshader = ResourceManager::loadShader("simple-vs.txt", ShaderType::VertexShader);
 	fshader = ResourceManager::loadShader("simple-fs.txt", ShaderType::FragmentShader);
@@ -29,10 +29,30 @@ void Application::onStart(){
 		{ -1.0f, -1.0f, 1.0f },
 		{ 1.0f, -1.0f, 1.0f },
 		{ 1.0f, 1.0f, 1.0f },
+		{ 1.0f, 1.0f, 1.0f },
+		{ -1.0f, 1.0f, 1.0f },
+		{ -1.0f, -1.0f, 1.0f },
 
-		{ -1.0f, -1.0f, 2.0f },
+		/*{ -1.0f, -1.0f, 2.0f },
 		{ 1.0f, -1.0f, 2.0f },
-		{ 1.0f, 1.0f, 2.0f }
+		{ 1.0f, 1.0f, 2.0f },
+		{ 1.0f, 1.0f, 2.0f },
+		{ -1.0f, 1.0f, 2.0f },
+		{ -1.0f, -1.0f, 2.0f },
+
+		{ -1.0f, -1.0f, 1.0f },
+		{ -1.0f, -1.0f, 2.0f },
+		{ -1.0f, 1.0f, 2.0f },
+		{ -1.0f, 1.0f, 2.0f },
+		{ -1.0f, 1.0f, 1.0f },
+		{ -1.0f, -1.0f, 1.0f },
+
+		{ 1.0f, -1.0f, 1.0f },
+		{ 1.0f, -1.0f, 2.0f },
+		{ 1.0f, 1.0f, 2.0f },
+		{ 1.0f, 1.0f, 2.0f },
+		{ 1.0f, 1.0f, 1.0f },
+		{ 1.0f, -1.0f, 1.0f }*/
 	});
 
 	vertices.update();
@@ -43,16 +63,38 @@ void Application::onStart(){
 		{ 1.0f, 0.0f, 0.0f, 1.0f },
 		{ 1.0f, 0.0f, 0.0f, 1.0f },
 		{ 1.0f, 0.0f, 0.0f, 1.0f },
+		{ 1.0f, 0.0f, 0.0f, 1.0f },
+		{ 1.0f, 0.0f, 0.0f, 1.0f },
+		{ 1.0f, 0.0f, 0.0f, 1.0f },
 
-		{ 0.0f, 0.0f, 0.0f, 1.0f },
-		{ 0.0f, 0.0f, 0.0f, 1.0f },
-		{ 0.0f, 0.0f, 0.0f, 1.0f },
+		/*{ 0.0f, 1.0f, 0.0f, 1.0f },
+		{ 0.0f, 1.0f, 0.0f, 1.0f },
+		{ 0.0f, 1.0f, 0.0f, 1.0f },
+		{ 0.0f, 1.0f, 0.0f, 1.0f },
+		{ 0.0f, 1.0f, 0.0f, 1.0f },
+		{ 0.0f, 1.0f, 0.0f, 1.0f },
+
+		{ 0.0f, 0.0f, 1.0f, 1.0f },
+		{ 0.0f, 0.0f, 1.0f, 1.0f },
+		{ 0.0f, 0.0f, 1.0f, 1.0f },
+		{ 0.0f, 0.0f, 1.0f, 1.0f },
+		{ 0.0f, 0.0f, 1.0f, 1.0f },
+		{ 0.0f, 0.0f, 1.0f, 1.0f },
+
+		{ 0.0f, 1.0f, 1.0f, 1.0f },
+		{ 0.0f, 1.0f, 1.0f, 1.0f },
+		{ 0.0f, 1.0f, 1.0f, 1.0f },
+		{ 0.0f, 1.0f, 1.0f, 1.0f },
+		{ 0.0f, 1.0f, 1.0f, 1.0f },
+		{ 0.0f, 1.0f, 1.0f, 1.0f }*/
 	});
 
 	colors.update();
 	colors.feed(colorIndex);
 
-	sprogram.loadMatrix(sprogram.getUniformLocation("modelview"), rotate(45.0f, 0.0f, 0.0f, 1.0f));
+	sprogram.loadMatrix(sprogram.getUniformLocation("modelview"),
+		rotate(10.0f, 1.0f, 1.0f, 0.0f));
+
 	sprogram.loadValue(sprogram.getUniformLocation("left"), -3.0f);
 	sprogram.loadValue(sprogram.getUniformLocation("right"), 3.0f);
 	sprogram.loadValue(sprogram.getUniformLocation("bottom"), -3.0f);
