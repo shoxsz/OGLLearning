@@ -2,16 +2,25 @@
 
 #include <cmath>
 
+#include "vector.hpp"
+
+Mat4x4f perspective(float fovy, float ratio, float n, float f) {
+	float tan = std::tanf(fovy);
+	float height = 2 * tan * n;
+	float width = height*ratio;
+	return perspective(-width/2, width/2, -height/2, height/2, n, f);
+}
+
 Mat4x4f perspective(float l, float r, float b, float t, float n, float f) {
 	return {
-		(2 * n) / (l - r), 0, (2 * (r + l)) / (r - l), 0,
-		0, 2 * n / (t - b), (2 * (t + b)) / (t - b), 0,
-		0, 0, (-1 * (f + n)) / (f - n), (2 * f * n) / (f - n),
+		2*n/(r - l), 0, (r+l)/(r-l), 0,
+		0, 2*n/(t-b), (t+b)/(t-b), 0,
+		0, 0, -(f+n)/(f-n), -2*f*n/(f-n),
 		0, 0, -1, 0
 	};
 }
 
-Mat4x4f ortographic(float l, float r, float b, float t, float n, float f) {
+Mat4x4f orthographic(float l, float r, float b, float t, float n, float f) {
 	return {
 		1 / (r - l)/2, 0, 0, -(r + l)/(r - l),
 		0, 1 / (t - b)/2, 0, -(t + b)/(t - b),
@@ -22,10 +31,10 @@ Mat4x4f ortographic(float l, float r, float b, float t, float n, float f) {
 
 Mat4x4f translate(float x, float y, float z) {
 	return {
-		1, 0, 0, x,
-		0, 1, 0, y,
-		0, 0, 1, z,
-		0, 0, 0, 1
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		x, y, z, 1
 	};
 }
 
@@ -37,10 +46,10 @@ Mat4x4f rotate(float angle, float x, float y, float z) {
 	float cos = std::cos(angle);
 	float sin = std::sin(angle);
 
-	return {
-		cos + x*x*(1 - cos), x*y*(1 - cos) - z*sin, x*z*(1 - cos) - y*sin, 0,
-		y*x*(1 - cos) + z*sin, cos + y*y*(1 - cos), y*z*(1 - cos) - x*sin, 0,
-		z*x*(1 - cos) + y*sin, y*z*(1 - cos) + x*sin, cos + z*z*(1 - cos), 0,
+	return{
+		cos + x*x*(1 - cos), y*x*(1 - cos) + z*sin, z*x*(1 - cos) + y*sin, 0,
+		x*y*(1 - cos) - z*sin, cos + y*y*(1 - cos), y*z*(1 - cos) + x*sin, 0,
+		x*z*(1 - cos) - y*sin, y*z*(1 - cos) - x*sin, cos + z*z*(1 - cos), 0,
 		0, 0, 0, 1
 	};
 }
@@ -51,5 +60,21 @@ Mat4x4f scale(float scale) {
 		0, scale, 0, 0,
 		0, 0, scale, 0,
 		0, 0, 0, 1
+	};
+}
+
+Mat4x4f lookAt(
+	const Matrix<1, 3, float>& eye,
+	const Matrix<1, 3, float>& center,
+	const Matrix<1, 3, float>& up) {
+	Matrix<1, 3, float> f(normalize<3, float>(center - eye));
+	Matrix<1, 3, float> s(normalize<3, float>(cross_product(f, up)));
+	Matrix<1, 3, float> u(cross_product(s, f));
+
+	return {
+		s[0][0], u[0][0], -f[0][0], (-dot_product(s, eye)),
+		s[0][1], u[0][1], -f[0][1], (-dot_product(u, eye)),
+		s[0][2], u[0][2], -f[0][2], (-dot_product(f, eye)),
+		0.0f, 0.0f, 0.0f, 1.0f
 	};
 }

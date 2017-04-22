@@ -70,7 +70,8 @@ public:
 	}
 
 	AccessType getAccessType()const { return accessType; }
-	unsigned int countVertices()const { return (coords.size() / vertexType::CoordCount); }
+	unsigned int countVertices()const { return (coords.size() / vertexType::CoordCount);}
+	unsigned int countIndices()const { return indices.size(); }
 	const std::vector<unsigned int>& getIndices()const { return indices; }
 	const std::vector<float>& getCoords()const { return coords; }
 

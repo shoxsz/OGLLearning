@@ -4,6 +4,14 @@
 #include <array>
 #include <stdexcept>
 
+/*Matrizes e vetores
+
+	Nesse framework vetores são armazenados como matrizes, o arquivo vector.hpp
+	possui funcionalidades para tratar das individualidades dos vetores, esse arquivo
+	implementa uma classe de matriz genérica  e fornece funções para matrizes específicas:
+		matrizes de transformação e matrizes de perspectiva(4x4)
+*/
+
 template<unsigned int rows, unsigned int columns, class dataType = float>
 class Matrix{
 public:
@@ -16,13 +24,6 @@ public:
 
     Matrix(std::initializer_list<dataType> list){
         set(list);
-    }
-
-    void loadIdentity(){
-        matrix.fill(0);
-        for(unsigned int i = 0; i < columns; i++){
-            matrix[i * columns + i] = 1;
-        }
     }
 
     MyTranspost transpose(){
@@ -55,7 +56,12 @@ public:
         }
     }
 
-    const dataType* get()const{ return matrix.data(); }
+	void loadIdentity() {
+		matrix.fill(0);
+		for (unsigned int i = 0; i < columns; i++) {
+			matrix[i * columns + i] = 1;
+		}
+	}
 
     void scale(const dataType& scalar){
         unsigned int elems = rows * columns;
@@ -78,25 +84,25 @@ public:
         }
     }
 
-    template<unsigned int _columns = columns, unsigned int _rows = rows>
-    Matrix<rows, _columns, dataType> mult(Matrix<_columns, _rows, dataType>& matrix)const{
+    template<unsigned int _rows = rows, unsigned int _columns = columns>
+    Matrix<rows, _columns, dataType> mult(Matrix<_rows, _columns, dataType>& matrix)const{
         Matrix<rows, _columns, dataType> result;
-        unsigned int line;
 
         if(columns != _rows)
             throw std::invalid_argument("Matrices informed can't be multiplied!'");
         
         for(unsigned int i = 0; i < rows; i++){
-            line = i * columns;
-            for(unsigned int j = 0; j < _columns; j++){
-                for(unsigned int k = 0; k < _columns; k++){
-                    result[i][j] += this->matrix[line + k] * matrix[k][j];
-                }
-            }
+			for (unsigned int j = 0; j < _columns; j++) {
+				for (unsigned int k = 0; k < columns; k++) {
+					result[i][j] += (*this)[i][k] * matrix[k][j];
+				}
+			}
         }
 
         return result;
     }
+
+	const dataType* get()const { return matrix.data(); }
 
     MyMatrix operator*(const dataType& scalar)const{
         MyMatrix result(*this);
@@ -151,10 +157,15 @@ typedef Matrix<2, 2, float> Mat2x2f;
 typedef Matrix<3, 3, float> Mat3x3f;
 typedef Matrix<4, 4, float> Mat4x4f;
 
+Mat4x4f perspective(float fovy, float ratio, float n, float f);
 Mat4x4f perspective(float l, float r, float b, float t, float n, float f);
-Mat4x4f ortographic(float l, float r, float b, float t, float n, float f);
+Mat4x4f orthographic(float l, float r, float b, float t, float n, float f);
 Mat4x4f translate(float x, float y, float z);
 Mat4x4f rotate(float angle, float x, float y, float z);
 Mat4x4f scale(float scale);
+Mat4x4f lookAt(
+	const Matrix<1, 3, float>& eye, 
+	const Matrix<1, 3, float>& center,
+	const Matrix<1, 3>& up);
 
 #endif

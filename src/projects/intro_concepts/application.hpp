@@ -22,6 +22,10 @@ private:
 	GLuint vao;
 	Vertices<Vertex, float> vertices;
 	Vertices<ColoredVertex, float> colors;
+
+	float angleX;
+	float angleY;
+	float zoom;
 };
 
 #endif
