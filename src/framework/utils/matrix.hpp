@@ -9,7 +9,7 @@
 	Nesse framework vetores são armazenados como matrizes, o arquivo vector.hpp
 	possui funcionalidades para tratar das individualidades dos vetores, esse arquivo
 	implementa uma classe de matriz genérica  e fornece funções para matrizes específicas:
-		matrizes de transformação e matrizes de perspectiva(4x4)
+		matrizes de transformação: translação, rotação, escala e projeção(4x4)
 */
 
 template<unsigned int rows, unsigned int columns, class dataType = float>
