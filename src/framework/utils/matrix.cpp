@@ -67,14 +67,17 @@ Mat4x4f lookAt(
 	const Matrix<1, 3, float>& eye,
 	const Matrix<1, 3, float>& center,
 	const Matrix<1, 3, float>& up) {
+	//forward vector
 	Matrix<1, 3, float> f(normalize<3, float>(center - eye));
+	//left vector
 	Matrix<1, 3, float> s(normalize<3, float>(cross_product(f, up)));
+	//up vector
 	Matrix<1, 3, float> u(cross_product(s, f));
 
 	return {
-		s[0][0], u[0][0], -f[0][0], (-dot_product(s, eye)),
-		s[0][1], u[0][1], -f[0][1], (-dot_product(u, eye)),
-		s[0][2], u[0][2], -f[0][2], (-dot_product(f, eye)),
-		0.0f, 0.0f, 0.0f, 1.0f
+		s[0][0], u[0][0], -f[0][0], 0.0f,
+		s[0][1], u[0][1], -f[0][1], 0.0f,
+		s[0][2], u[0][2], -f[0][2], 0.0f,
+		(-dot_product(s, eye)), (-dot_product(u, eye)), (-dot_product(f, eye)), 1.0f
 	};
 }

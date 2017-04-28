@@ -6,9 +6,12 @@
 
 #include <sdl\sdl_app.hpp>
 #include <graphics\shader.hpp>
+#include <graphics\texture_manager.hpp>
+#include <graphics\model_loader.hpp>
 
 class ResourceManager{
 public:
+	static std::string getModel(const std::string& model) { return SDLApplication::getInstance()->getAppDir() + std::string("resources\\models\\") + model; }
 	static std::string getImage(const std::string& image) { return SDLApplication::getInstance()->getAppDir() + std::string("resources\\images\\") + image; }
 	static std::string getFont(const std::string& font) { return SDLApplication::getInstance()->getAppDir() + std::string("resources\\fonts\\") + font; }
 	static std::string getSound(const std::string& sound) { return SDLApplication::getInstance()->getAppDir() + std::string("resources\\sounds\\") + sound; }
@@ -18,6 +21,15 @@ public:
 		ShaderPtr shaderptr(new Shader());
 		shaderptr->load(getShader(shader), shadertType);
 		return shaderptr;
+	}
+
+	static Texture2DPtr loadTexture(const std::string& texture, bool useMipmaps = true) {
+		return TextureManager::instance()->load(getImage(texture), useMipmaps);
+	}
+
+	static void loadModel(const std::string& model, Model& M) {
+		ModelLoader loader;
+		loader.load(getModel(model), M);
 	}
 };
 

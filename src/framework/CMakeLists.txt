@@ -46,6 +46,10 @@ add_library(SDLApplication
                 ${GRAPHICS_DIR}/texture_manager.hpp
                 ${GRAPHICS_DIR}/texture_manager.cpp
                 ${GRAPHICS_DIR}/vertices.hpp
+                ${GRAPHICS_DIR}/model_loader.hpp
+                ${GRAPHICS_DIR}/model_loader.cpp
+                ${GRAPHICS_DIR}/dds_loader.hpp
+                ${GRAPHICS_DIR}/dds_loader.cpp
             #sdl
                 ${SDL_DIR}/sdl_app.hpp
                 ${SDL_DIR}/sdl_app.cpp
@@ -71,6 +75,9 @@ add_library(SDLApplication
                 ${UTILS_DIR}/rect.hpp
                 ${UTILS_DIR}/scene.hpp
                 ${UTILS_DIR}/size.hpp
+                ${UTILS_DIR}/string.hpp
+                ${UTILS_DIR}/string.cpp
+                ${UTILS_DIR}/binary_reader.hpp
         )
     
 #linking

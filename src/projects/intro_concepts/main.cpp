@@ -19,8 +19,5 @@ int main(int argc, char* argv[]){
         SDLMessageBox::create()->showSimple(SDLMessageBox::Error, (app == nullptr ? app->getWindow() : nullptr), "Error", ex.what());
     }
 
-    if(app)
-        app->quit();
-
     return 0;
 }

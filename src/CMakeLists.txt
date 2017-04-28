@@ -17,7 +17,8 @@ set(DEPS_DIRECTORY C:/Users/PauloMarcio/Documents/development/libraries)
 #includes
 include_directories(
     ${DEPS_DIRECTORY}/SDL2.0.5/include
-    ${DEPS_DIRECTORY}/glew-2.0.0/include)
+    ${DEPS_DIRECTORY}/glew-2.0.0/include
+    ${DEPS_DIRECTORY}/obj-loader/Source)
 
 #link dependencies
 link_directories(

@@ -11,7 +11,7 @@
 
 struct Vertex {
 	enum { CoordCount = 3, GLType = GL_FLOAT };
-	float x, y, z;
+	GLfloat x, y, z;
 };
 
 struct TexturedVertex {

@@ -5,6 +5,8 @@
 #include <graphics\shader_program.hpp>
 #include <graphics\shader.hpp>
 #include <graphics\vertices.hpp>
+#include <graphics\texture.hpp>
+#include <graphics\model_loader.hpp>
 
 class Application : public ApplicationListener{
 public:
@@ -21,11 +23,17 @@ private:
 	//ShaderPtr vshader, fshader;
 	GLuint vao;
 	Vertices<Vertex, float> vertices;
-	Vertices<ColoredVertex, float> colors;
+	Vertices<TexturedVertex, float> texCoords;
+	Vertices<Vertex, float> normals;
+
+	Model thresh;
+
+	Texture2DPtr texture;
 
 	float angleX;
 	float angleY;
 	float zoom;
+	float movex, movey;
 };
 
 #endif

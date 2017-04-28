@@ -11,6 +11,10 @@ typedef Matrix<1, 2, float> Vec2f;
 typedef Matrix<1, 3, float> Vec3f;
 typedef Matrix<1, 4, float> Vec4f;
 
+/*PROBLEMA: a função normalize deve receber uma referência constante para um vetor,
+no entanto isso tem gerado alguns problemas quando a chamada é: normalize(vec1 - vec2),
+os componentes do vetor resultante não são propriamente copiados para o vetor do parâmetro*/
+
 template <unsigned int cols = 4, typename dataType = float>
 Matrix<1, cols, dataType> normalize(Matrix<1, cols, dataType> vec) {
 	dataType norma = dataType();
@@ -28,7 +32,7 @@ Matrix<1, cols, dataType> normalize(Matrix<1, cols, dataType> vec) {
 	return vec_n;
 }
 
-//por enquanto só calcula o produto cruzado de vetores 3
+//por enquanto só calcula o produto cruzado de vetores do R³
 template<unsigned int cols = 3, typename dataType = float>
 Matrix<1, cols> cross_product(
 	const Matrix<1, cols, dataType>& v1,
