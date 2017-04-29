@@ -7,7 +7,8 @@
 #include <sdl\sdl_app.hpp>
 #include <graphics\shader.hpp>
 #include <graphics\texture_manager.hpp>
-#include <graphics\model_loader.hpp>
+#include <graphics\obj_loader.hpp>
+#include <graphics\skn_loader.hpp>
 
 class ResourceManager{
 public:
@@ -27,8 +28,13 @@ public:
 		return TextureManager::instance()->load(getImage(texture), useMipmaps);
 	}
 
-	static void loadModel(const std::string& model, Model& M) {
-		ModelLoader loader;
+	static void loadOBJ(const std::string& model, Model& M) {
+		OBJLoader loader;
+		loader.load(getModel(model), M);
+	}
+
+	static void loadSKN(const std::string& model, std::vector<ModelPtr>& M) {
+		SKNLoader loader;
 		loader.load(getModel(model), M);
 	}
 };

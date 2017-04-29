@@ -1,8 +1,8 @@
-#include "model_loader.hpp"
+#include "obj_loader.hpp"
 
 #include <utils/string.hpp>
 
-void ModelLoader::load(const std::string& file, Model& model) {
+void OBJLoader::load(const std::string& file, Model& model) {
 	std::ifstream ifile(file);
 	std::string line;
 	std::vector<std::string> words;
@@ -47,7 +47,7 @@ void ModelLoader::load(const std::string& file, Model& model) {
 	}
 }
 
-void ModelLoader::loadVertices(std::ifstream& file, std::vector<std::string>& line) {
+void OBJLoader::loadVertices(std::ifstream& file, std::vector<std::string>& line) {
 	Vertex coords = {
 		std::atof(line[1].c_str()),
 		std::atof(line[2].c_str()),
@@ -57,17 +57,17 @@ void ModelLoader::loadVertices(std::ifstream& file, std::vector<std::string>& li
 	model->getCoords().addVertex(coords);
 }
 
-void ModelLoader::loadNormals(std::ifstream& file, std::vector<std::string>& line) {
+void OBJLoader::loadNormals(std::ifstream& file, std::vector<std::string>& line) {
 	Vertex coords = {
 		std::atof(line[1].c_str()),
 		std::atof(line[2].c_str()),
 		std::atof(line[3].c_str())
 	};
 
-	model->getCoords().addVertex(coords);
+	model->getNormals().addVertex(coords);
 }
 
-void ModelLoader::loadTextures(std::ifstream& file, std::vector<std::string>& line) {
+void OBJLoader::loadTextures(std::ifstream& file, std::vector<std::string>& line) {
 	TexturedVertex coords = {
 		std::atof(line[1].c_str()),
 		std::atof(line[2].c_str())
@@ -76,7 +76,7 @@ void ModelLoader::loadTextures(std::ifstream& file, std::vector<std::string>& li
 	model->getTexCoords().addVertex(coords);
 }
 
-void ModelLoader::loadFaces(std::ifstream& file, std::vector<std::string>& line) {
+void OBJLoader::loadFaces(std::ifstream& file, std::vector<std::string>& line) {
 	std::vector<std::string> v0, v1, v2;
 	ModelFace modelFace;
 

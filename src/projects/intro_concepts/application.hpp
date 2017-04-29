@@ -6,7 +6,7 @@
 #include <graphics\shader.hpp>
 #include <graphics\vertices.hpp>
 #include <graphics\texture.hpp>
-#include <graphics\model_loader.hpp>
+#include <graphics\obj_loader.hpp>
 
 class Application : public ApplicationListener{
 public:
@@ -26,7 +26,7 @@ private:
 	Vertices<TexturedVertex, float> texCoords;
 	Vertices<Vertex, float> normals;
 
-	Model thresh;
+	ModelPtr thresh;
 
 	Texture2DPtr texture;
 

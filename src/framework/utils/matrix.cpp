@@ -75,9 +75,9 @@ Mat4x4f lookAt(
 	Matrix<1, 3, float> u(cross_product(s, f));
 
 	return {
-		s[0][0], s[0][1], s[0][2], (-dot_product(s, eye)),
-		u[0][0], u[0][1], u[0][2], (-dot_product(u, eye)),
-		-f[0][0], u[0][1], -f[0][2], (-dot_product(f, eye)),
-		0.0f, 0.0f, 0.0f, 1.0f
+		s[0][0], s[0][1], s[0][2], 0.0f,
+		u[0][0], u[0][1], u[0][2], 0.0f,
+		-f[0][0], u[0][1], -f[0][2], 0.0f,
+		eye[0][0], eye[0][1], eye[0][2], 1.0f
 	};
 }

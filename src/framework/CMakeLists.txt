@@ -46,10 +46,13 @@ add_library(SDLApplication
                 ${GRAPHICS_DIR}/texture_manager.hpp
                 ${GRAPHICS_DIR}/texture_manager.cpp
                 ${GRAPHICS_DIR}/vertices.hpp
-                ${GRAPHICS_DIR}/model_loader.hpp
-                ${GRAPHICS_DIR}/model_loader.cpp
+                ${GRAPHICS_DIR}/obj_loader.hpp
+                ${GRAPHICS_DIR}/obj_loader.cpp
                 ${GRAPHICS_DIR}/dds_loader.hpp
                 ${GRAPHICS_DIR}/dds_loader.cpp
+                ${GRAPHICS_DIR}/skn_loader.hpp
+                ${GRAPHICS_DIR}/skn_loader.cpp
+                ${GRAPHICS_DIR}/3d_model.hpp
             #sdl
                 ${SDL_DIR}/sdl_app.hpp
                 ${SDL_DIR}/sdl_app.cpp

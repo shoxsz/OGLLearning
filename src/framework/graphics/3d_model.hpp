@@ -1,12 +1,10 @@
-#ifndef _MODEL_LOADER_HPP_
-#define _MODEL_LOADER_HPP_
+#ifndef _3D_MODEL_HPP_
+#define _3D_MODEL_HPP_
 
-#include "vertices.hpp"
+#include <memory>
 
-#include <string>
-#include <fstream>
-
-#include <utils/matrix.hpp>
+#include <graphics\vertices.hpp>
+#include <utils\matrix.hpp>
 
 struct ModelFace {
 	Matrix<3, 3> attribs;
@@ -36,17 +34,6 @@ private:
 	std::vector<ModelFace> faces;
 };
 
-class ModelLoader {
-public:
-	void load(const std::string& file, Model& model);
-private:
-
-	void loadVertices(std::ifstream& file, std::vector<std::string>& line);
-	void loadNormals(std::ifstream& file, std::vector<std::string>& line);
-	void loadTextures(std::ifstream& file, std::vector<std::string>& line);
-	void loadFaces(std::ifstream& file, std::vector<std::string>& line);
-
-	Model* model;
-};
+typedef std::shared_ptr<Model> ModelPtr;
 
 #endif

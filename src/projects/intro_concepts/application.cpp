@@ -63,16 +63,22 @@ void Application::onStart(){
 	texCoords.update(true);
 	texCoords.feed(texIndex);*/
 
-	ResourceManager::loadModel("thresh_model.obj", thresh);
+	std::vector<ModelPtr> models;
+	ResourceManager::loadSKN("cassiopeia.skn", models);
+
+	Model model;
+	ResourceManager::loadOBJ("cassiopeia_model.obj", model);
+
+	thresh = models[0];
 	glEnableVertexAttribArray(vertexIndex);
-	thresh.getCoords().update(true);
-	thresh.getCoords().feed(vertexIndex);
+	thresh->getCoords().update(true);
+	thresh->getCoords().feed(vertexIndex);
 
 	glEnableVertexAttribArray(texIndex);
-	thresh.getTexCoords().update(true);
-	thresh.getTexCoords().feed(texIndex);
+	thresh->getTexCoords().update(true);
+	thresh->getTexCoords().feed(texIndex);
 
-	texture = ResourceManager::loadTexture("thresh_tex.dds", false);
+	texture = ResourceManager::loadTexture("cassiopeia_tex.dds", false);
 	texture->setFiltering(Nearest, Nearest);
 	texture->bind();
 
@@ -96,7 +102,7 @@ void Application::render(milliseconds delta){
 	sprogram.loadMatrix(sprogram.getUniformLocation("projection"),
 		perspective(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f));
 
-	float radius = 1.0f;
+	float radius = zoom;
 	float pi = std::acos(-1);
 	float xz = pi * angleX / 180.0f;
 	float xy = pi * angleY / 180.0f;
@@ -110,14 +116,14 @@ void Application::render(milliseconds delta){
 	float y = radius*cos_xy;
 
 	/*sprogram.loadMatrix(sprogram.getUniformLocation("modelview"), 
-		lookAt({ x, y, z }, {0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}));*/
+		lookAt({ x , y, z }, {movex, movey, 0.0f}, {0.0f, 1.0f, 0.0f}));*/
 
 	sprogram.loadMatrix(sprogram.getUniformLocation("modelview"),
 		rotate(angleX, 0.0f, 1.0f, 0.0f)
 				.mult(rotate(angleY, 1.0f, 0.0f, 0.0f))
 				.mult(translate(movex, movey, zoom)));
 
-	glDrawElements(GL_TRIANGLES, thresh.getCoords().countIndices(), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, thresh->getCoords().countIndices(), GL_UNSIGNED_INT, nullptr);
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
@@ -127,7 +133,7 @@ void Application::caught(SDL_Event* event){
 		SDLApplication::getInstance()->quit();
 		break;
 	case SDL_MOUSEWHEEL:
-		zoom += event->wheel.y / 1.0f;
+		zoom += event->wheel.y * 4;
 		break;
 	case SDL_MOUSEMOTION:
 		//se apenas o botão direito estiver pressionado
@@ -136,8 +142,8 @@ void Application::caught(SDL_Event* event){
 			angleY += -event->motion.yrel;
 		}
 		else if (SDL_BUTTON(SDL_BUTTON_LEFT) == SDL_GetMouseState(nullptr, nullptr)) {
-			movex += event->motion.xrel / 10.0f;
-			movey += -event->motion.yrel / 10.0f;
+			movex += event->motion.xrel;
+			movey += -event->motion.yrel;
 		}
 		break;
 	}
