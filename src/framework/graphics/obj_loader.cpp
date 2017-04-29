@@ -2,7 +2,7 @@
 
 #include <utils/string.hpp>
 
-void OBJLoader::load(const std::string& file, Model& model) {
+void OBJLoader::load(const std::string& file, ModelPtr& model) {
 	std::ifstream ifile(file);
 	std::string line;
 	std::vector<std::string> words;
@@ -10,7 +10,8 @@ void OBJLoader::load(const std::string& file, Model& model) {
 	if (!ifile.is_open())
 		throw std::runtime_error("Failed to load file: " + file);
 
-	this->model = &model;
+	model.reset(new Model());
+	this->model = model;
 
 	while (!ifile.eof()) {
 		std::getline(ifile, line);
@@ -31,20 +32,22 @@ void OBJLoader::load(const std::string& file, Model& model) {
 	}
 
 	//cria os indices
-	const std::vector<ModelFace>& faces = model.getFaces();
+	const std::vector<ModelFace>& faces = model->getFaces();
 	for (const ModelFace& mface : faces) {
-		model.getCoords().addIndice(mface.attribs[0][0]-1);
-		model.getCoords().addIndice(mface.attribs[1][0]-1);
-		model.getCoords().addIndice(mface.attribs[2][0]-1);
+		model->getCoords().addIndice(mface.attribs[0][0]-1);
+		model->getCoords().addIndice(mface.attribs[1][0]-1);
+		model->getCoords().addIndice(mface.attribs[2][0]-1);
 
-		model.getTexCoords().addIndice(mface.attribs[0][1]-1);
-		model.getTexCoords().addIndice(mface.attribs[1][1]-1);
-		model.getTexCoords().addIndice(mface.attribs[2][1]-1);
+		model->getTexCoords().addIndice(mface.attribs[0][1]-1);
+		model->getTexCoords().addIndice(mface.attribs[1][1]-1);
+		model->getTexCoords().addIndice(mface.attribs[2][1]-1);
 
-		model.getNormals().addIndice(mface.attribs[0][2]-1);
-		model.getNormals().addIndice(mface.attribs[1][2]-1);
-		model.getNormals().addIndice(mface.attribs[2][2]-1);
+		model->getNormals().addIndice(mface.attribs[0][2]-1);
+		model->getNormals().addIndice(mface.attribs[1][2]-1);
+		model->getNormals().addIndice(mface.attribs[2][2]-1);
 	}
+
+	this->model.reset();
 }
 
 void OBJLoader::loadVertices(std::ifstream& file, std::vector<std::string>& line) {

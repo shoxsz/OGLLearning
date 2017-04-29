@@ -66,7 +66,7 @@ void Application::onStart(){
 	std::vector<ModelPtr> models;
 	ResourceManager::loadSKN("cassiopeia.skn", models);
 
-	Model model;
+	ModelPtr model;
 	ResourceManager::loadOBJ("cassiopeia_model.obj", model);
 
 	thresh = models[0];
@@ -75,7 +75,7 @@ void Application::onStart(){
 	thresh->getCoords().feed(vertexIndex);
 
 	glEnableVertexAttribArray(texIndex);
-	thresh->getTexCoords().update(true);
+	thresh->getTexCoords().update();
 	thresh->getTexCoords().feed(texIndex);
 
 	texture = ResourceManager::loadTexture("cassiopeia_tex.dds", false);

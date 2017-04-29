@@ -10,7 +10,7 @@
 
 class OBJLoader {
 public:
-	void load(const std::string& file, Model& model);
+	void load(const std::string& file, ModelPtr& model);
 private:
 
 	void loadVertices(std::ifstream& file, std::vector<std::string>& line);
@@ -18,7 +18,7 @@ private:
 	void loadTextures(std::ifstream& file, std::vector<std::string>& line);
 	void loadFaces(std::ifstream& file, std::vector<std::string>& line);
 
-	Model* model;
+	ModelPtr model;
 };
 
 #endif

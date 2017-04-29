@@ -28,7 +28,7 @@ public:
 		return TextureManager::instance()->load(getImage(texture), useMipmaps);
 	}
 
-	static void loadOBJ(const std::string& model, Model& M) {
+	static void loadOBJ(const std::string& model, ModelPtr& M) {
 		OBJLoader loader;
 		loader.load(getModel(model), M);
 	}
