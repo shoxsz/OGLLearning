@@ -6,7 +6,7 @@
 
 #include <utils\binary_reader.hpp>
 
-#define DDS_MAGIC "DDS"
+#define DDS_MAGIC "DDS "
 
 //  DDS_header.dwFlags
 #define DDSD_CAPS                   0x00000001 
@@ -98,7 +98,7 @@
 
 union DDS_header {
 	struct {
-		unsigned int    dwMagic;
+		unsigned int	dwMagic;
 		unsigned int    dwSize;
 		unsigned int    dwFlags;
 		unsigned int    dwHeight;
@@ -108,7 +108,7 @@ union DDS_header {
 		unsigned int    dwMipMapCount;
 		unsigned int    dwReserved1[11];
 
-		//  DDPIXELFORMAT
+		//  DDS_PIXELFORMAT
 		struct {
 			unsigned int    dwSize;
 			unsigned int    dwFlags;
@@ -120,7 +120,7 @@ union DDS_header {
 			unsigned int    dwAlphaBitMask;
 		}               sPixelFormat;
 
-		//  DDCAPS2
+		// antigo DDCAPS2(depracted)
 		struct {
 			unsigned int    dwCaps1;
 			unsigned int    dwCaps2;
@@ -176,7 +176,7 @@ void assert(bool expression, const std::string& description = "Failed to load fi
 	}
 }
 
-Texture2DPtr DDSLoader::load(const std::string& file){
+Texture2DPtr DDSLoader::load(const std::string& file) {
 	DDS_header hdr;
 	size_t s = 0;
 	unsigned int x = 0;
@@ -187,29 +187,34 @@ Texture2DPtr DDSLoader::load(const std::string& file){
 
 	Texture2DPtr texture(new Texture2D());
 
-	std::ifstream istream(file);
+	std::ifstream istream(file, std::ifstream::binary);
 	assert(istream.is_open(), "Failed to open file: " + file);
-	
+
 	BinaryReader reader(istream);
 
 	reader.read(&hdr, sizeof(hdr));
 
-	magic.resize(3);
+	magic.resize(4);
 	magic[0] = ((char*)&hdr.dwMagic)[0];
 	magic[1] = ((char*)&hdr.dwMagic)[1];
 	magic[2] = ((char*)&hdr.dwMagic)[2];
+	magic[3] = ((char*)&hdr.dwMagic)[3];
+
 
 	assert(magic == DDS_MAGIC);
 	assert(hdr.dwSize == 124);
-	assert(hdr.dwFlags & DDSD_PIXELFORMAT);
-	assert(hdr.dwFlags & DDSD_CAPS);
+	assert((hdr.dwFlags & DDSD_CAPS) == DDSD_CAPS);
+	assert((hdr.dwFlags & DDSD_WIDTH) == DDSD_WIDTH);
+	assert((hdr.dwFlags & DDSD_HEIGHT) == DDSD_HEIGHT);
+	assert((hdr.dwFlags & DDSD_PIXELFORMAT) == DDSD_PIXELFORMAT);
 
 	unsigned int xSize = hdr.dwWidth;
 	unsigned int ySize = hdr.dwHeight;
+	//testa se é uma potência de 2
 	assert(!(xSize & (xSize - 1)));
 	assert(!(ySize & (ySize - 1)));
 
-	DdsLoadInfo * li;
+	DdsLoadInfo* li;
 
 	if (PF_IS_DXT1(hdr.sPixelFormat)) {
 		li = &loadInfoDXT1;
@@ -241,7 +246,7 @@ Texture2DPtr DDSLoader::load(const std::string& file){
 
 	x = xSize;
 	y = ySize;
-	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+
 	mipMapCount = (hdr.dwFlags & DDSD_MIPMAPCOUNT) ? hdr.dwMipMapCount : 1;
 	if (mipMapCount > 1) {
 		hasMipmaps = true;
@@ -251,7 +256,7 @@ Texture2DPtr DDSLoader::load(const std::string& file){
 		assert(size == hdr.dwPitchOrLinearSize);
 		assert(hdr.dwFlags & DDSD_LINEARSIZE);
 		unsigned char* data = new unsigned char[size];
-		
+
 		li->internalFormat;
 		for (unsigned int ix = 0; ix < mipMapCount; ++ix) {
 			reader.read(data, size);
@@ -263,55 +268,55 @@ Texture2DPtr DDSLoader::load(const std::string& file){
 		delete data;
 	}
 	/*else if (li->palette) {
-		//  currently, we unpack palette into BGRA
-		//  I'm not sure we always get pitch...
-		assert(hdr.dwFlags & DDSD_PITCH);
-		assert(hdr.sPixelFormat.dwRGBBitCount == 8);
-		size_t size = hdr.dwPitchOrLinearSize * ySize;
-		//  And I'm even less sure we don't get padding on the smaller MIP levels...
-		assert(size == x * y * li->blockBytes);
-		format = li->externalFormat;
-		cFormat = li->internalFormat;
-		unsigned char * data = (unsigned char *)malloc(size);
-		unsigned int palette[256];
-		unsigned int * unpacked = (unsigned int *)malloc(size * sizeof(unsigned int));
-		fread(palette, 4, 256, f);
-		for (unsigned int ix = 0; ix < mipMapCount; ++ix) {
-			fread(data, 1, size, f);
-			for (unsigned int zz = 0; zz < size; ++zz) {
-				unpacked[zz] = palette[data[zz]];
-			}
-			glPixelStorei(GL_UNPACK_ROW_LENGTH, y);
-			glTexImage2D(GL_TEXTURE_2D, ix, li->internalFormat, x, y, 0, li->externalFormat, li->type, unpacked);
-			gl->updateError();
-			x = (x + 1) >> 1;
-			y = (y + 1) >> 1;
-			size = x * y * li->blockBytes;
-		}
-		free(data);
-		free(unpacked);
+	//  currently, we unpack palette into BGRA
+	//  I'm not sure we always get pitch...
+	assert(hdr.dwFlags & DDSD_PITCH);
+	assert(hdr.sPixelFormat.dwRGBBitCount == 8);
+	size_t size = hdr.dwPitchOrLinearSize * ySize;
+	//  And I'm even less sure we don't get padding on the smaller MIP levels...
+	assert(size == x * y * li->blockBytes);
+	format = li->externalFormat;
+	cFormat = li->internalFormat;
+	unsigned char * data = (unsigned char *)malloc(size);
+	unsigned int palette[256];
+	unsigned int * unpacked = (unsigned int *)malloc(size * sizeof(unsigned int));
+	fread(palette, 4, 256, f);
+	for (unsigned int ix = 0; ix < mipMapCount; ++ix) {
+	fread(data, 1, size, f);
+	for (unsigned int zz = 0; zz < size; ++zz) {
+	unpacked[zz] = palette[data[zz]];
+	}
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, y);
+	glTexImage2D(GL_TEXTURE_2D, ix, li->internalFormat, x, y, 0, li->externalFormat, li->type, unpacked);
+	gl->updateError();
+	x = (x + 1) >> 1;
+	y = (y + 1) >> 1;
+	size = x * y * li->blockBytes;
+	}
+	free(data);
+	free(unpacked);
 	}
 	else {
-		if (li->swap) {
-			glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
-		}
-		size = x * y * li->blockBytes;
-		format = li->externalFormat;
-		cFormat = li->internalFormat;
-		unsigned char * data = (unsigned char *)malloc(size);
-		//fixme: how are MIP maps stored for 24-bit if pitch != ySize*3 ?
-		for (unsigned int ix = 0; ix < mipMapCount; ++ix) {
-			fread(data, 1, size, f);
-			glPixelStorei(GL_UNPACK_ROW_LENGTH, y);
-			glTexImage2D(GL_TEXTURE_2D, ix, li->internalFormat, x, y, 0, li->externalFormat, li->type, data);
-			gl->updateError();
-			x = (x + 1) >> 1;
-			y = (y + 1) >> 1;
-			size = x * y * li->blockBytes;
-		}
-		free(data);
-		glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
-		gl->updateError();
+	if (li->swap) {
+	glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
+	}
+	size = x * y * li->blockBytes;
+	format = li->externalFormat;
+	cFormat = li->internalFormat;
+	unsigned char * data = (unsigned char *)malloc(size);
+	//fixme: how are MIP maps stored for 24-bit if pitch != ySize*3 ?
+	for (unsigned int ix = 0; ix < mipMapCount; ++ix) {
+	fread(data, 1, size, f);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, y);
+	glTexImage2D(GL_TEXTURE_2D, ix, li->internalFormat, x, y, 0, li->externalFormat, li->type, data);
+	gl->updateError();
+	x = (x + 1) >> 1;
+	y = (y + 1) >> 1;
+	size = x * y * li->blockBytes;
+	}
+	free(data);
+	glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
+	gl->updateError();
 	}*/
 	texture->mipmapsRange(0, mipMapCount - 1);
 

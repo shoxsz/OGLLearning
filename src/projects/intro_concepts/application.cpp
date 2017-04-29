@@ -29,7 +29,7 @@ void Application::onStart(){
 	sprogram.link({ {"vertex", vertexIndex}, {"tex", texIndex }, {"normal", normalIndex} });
 	sprogram.bind();
 
-	glEnableVertexAttribArray(vertexIndex);
+	/*glEnableVertexAttribArray(vertexIndex);
 	vertices.addVertices({
 		{ -0.5f, -0.5f, 0.0f },
 		{ 0.5f, -0.5f, 0.0f },
@@ -61,29 +61,23 @@ void Application::onStart(){
 	texCoords.setIndices({ 0, 1, 2, 2, 3, 0, 4, 5, 6, 6, 7, 4 });
 
 	texCoords.update(true);
-	texCoords.feed(texIndex);
+	texCoords.feed(texIndex);*/
 
-	/*ResourceManager::loadModel("thresh_model.obj", thresh);
+	ResourceManager::loadModel("thresh_model.obj", thresh);
 	glEnableVertexAttribArray(vertexIndex);
 	thresh.getCoords().update(true);
 	thresh.getCoords().feed(vertexIndex);
 
 	glEnableVertexAttribArray(texIndex);
 	thresh.getTexCoords().update(true);
-	thresh.getTexCoords().feed(texIndex);*/
+	thresh.getTexCoords().feed(texIndex);
 
 	texture = ResourceManager::loadTexture("thresh_tex.dds", false);
 	texture->setFiltering(Nearest, Nearest);
 	texture->bind();
 
-	/*sprogram.loadMatrix(sprogram.getUniformLocation("projection"),
-		perspective(45.0f, 1920.0f / 1080.0f , 1.0f, 100.0f));*/
-
-	sprogram.loadMatrix(sprogram.getUniformLocation("projection"),
-		perspective(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f));
-
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	angleX = angleY = 0;
+	angleX = angleY = 90.0f;
 	zoom = -10.0f;
 	movex = movey = 0.0f;
 }
@@ -99,16 +93,31 @@ void Application::logics(milliseconds delta){
 void Application::render(milliseconds delta){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	/*angle += delta.count() * 0.05;
-	if (angle >= 360.0f)
-		angle = 0.0f;*/
+	sprogram.loadMatrix(sprogram.getUniformLocation("projection"),
+		perspective(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f));
+
+	float radius = 1.0f;
+	float pi = std::acos(-1);
+	float xz = pi * angleX / 180.0f;
+	float xy = pi * angleY / 180.0f;
+	float sin_xz = std::sin(xz);
+	float cos_xz = std::cos(xz);
+	float sin_xy = std::sin(xy);
+	float cos_xy = std::cos(xy);
+
+	float x = radius*sin_xy*cos_xz;
+	float z = radius*sin_xy*sin_xz;
+	float y = radius*cos_xy;
+
+	/*sprogram.loadMatrix(sprogram.getUniformLocation("modelview"), 
+		lookAt({ x, y, z }, {0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}));*/
 
 	sprogram.loadMatrix(sprogram.getUniformLocation("modelview"),
 		rotate(angleX, 0.0f, 1.0f, 0.0f)
 				.mult(rotate(angleY, 1.0f, 0.0f, 0.0f))
 				.mult(translate(movex, movey, zoom)));
 
-	glDrawElements(GL_TRIANGLES, vertices.countIndices(), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, thresh.getCoords().countIndices(), GL_UNSIGNED_INT, nullptr);
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 

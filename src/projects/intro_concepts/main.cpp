@@ -10,8 +10,8 @@ int main(int argc, char* argv[]){
     try{
         app->init(argc, (const char**)argv, SDLApplication::Video);
         app->setName("First concepts");
-        app->setWidth(640);
-        app->setHeight(640);
+        app->setWidth(600);
+        app->setHeight(600);
 
         app->run(appListener);
 
