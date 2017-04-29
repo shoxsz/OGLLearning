@@ -26,7 +26,6 @@ struct SKN_MetaDataBlock {
 };
 
 struct SKN_IndexData {
-	short buffer;
 	short index;
 };
 
@@ -87,8 +86,11 @@ void SKNLoader::load(const std::string& file, std::vector<ModelPtr>& models) {
 	}
 
 	//indices
+	/*Na minha fonte(skn_loader.hpp) de referência para carrega arquivos .skn é dito que a estrutura
+	SKN_IndexData possui dois campos, mas parece que é apenas um, por isso a divisão por dois,
+	ficar atento para quantidades impares de indices*/
 	skn.indexData = new SKN_IndexData[skn.metadata.numIndices];
-	for (unsigned int i = 0; i < skn.metadata.numIndices/2; i++) {
+	for (unsigned int i = 0; i < skn.metadata.numIndices; i++) {
 		reader.read(&skn.indexData[i], sizeof(SKN_IndexData));
 	}
 
@@ -107,11 +109,8 @@ void SKNLoader::load(const std::string& file, std::vector<ModelPtr>& models) {
 	for (unsigned int i = 0; i < skn.numMats; i++) {
 		//load indices
 		for (unsigned int c = skn.matsHeader[i].startIndex; c < skn.matsHeader[i].numIndices; c++) {
-			model->getCoords().addIndice(skn.indexData[c].buffer);
 			model->getCoords().addIndice(skn.indexData[c].index);
-			model->getTexCoords().addIndice(skn.indexData[c].buffer);
 			model->getTexCoords().addIndice(skn.indexData[c].index);
-			model->getNormals().addIndice(skn.indexData[c].buffer);
 			model->getNormals().addIndice(skn.indexData[c].index);
 		}
 
